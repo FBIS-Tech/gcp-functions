@@ -36,9 +36,9 @@ const getUser = async (msisdn) => {
 
 }
 
-const getSubscriptions = async (keyword) => {
+const getSubscriptions = async (productId) => {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT id,name,duration,dnd,service_id,product_id FROM subscriptions WHERE keyword='${keyword}' ORDER BY id ASC`, (error, results) => {
+        pool.query(`SELECT id,name,duration,dnd,service_id,product_id FROM subscriptions WHERE product_id='${productId}' ORDER BY id ASC`, (error, results) => {
             if (error) {
                 reject(error)
             }

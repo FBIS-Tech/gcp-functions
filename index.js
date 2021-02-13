@@ -2,7 +2,7 @@
 
 const moment = require('moment')
 const parser = require('xml2json');
-const { getUsers, getUser, getRoles, addUser, addUserRole, addUserSubscription, getSubscriptions } = require('./queries/queries')
+const {getUser, getRoles, addUser, addUserRole, addUserSubscription, getSubscriptions } = require('./queries/queries')
 const {
     DATASYNC_TYPE_ADD,
     DATASYNC_TYPE_DELETE,
@@ -13,122 +13,6 @@ const {
 
 const DATE_FORMAT = 'YYYYMMddHHmmss'
 
-const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <soapenv:Body>
-        <ns1:syncOrderRelation
-                                        xmlns:ns1="http://www.csapi.org/schema/parlayx/data/sync/v1_0/local">
-            <ns1:userID>
-                <ID>8619800000001</ID>
-                <type>0</type>
-            </ns1:userID>
-            <ns1:spID>001100</ns1:spID>
-            <ns1:productID>1000000423</ns1:productID>
-            <ns1:serviceID>0011002000001100</ns1:serviceID>
-            <ns1:serviceList>0011002000001100</ns1:serviceList>
-            <ns1:updateType>1</ns1:updateType>
-            <ns1:updateTime>20130723082551</ns1:updateTime>
-            <ns1:updateDesc>Addition</ns1:updateDesc>
-            <ns1:effectiveTime>20130723082551</ns1:effectiveTime>
-            <ns1:expiryTime>20130723082551</ns1:expiryTime>
-            <ns1:extensionInfo>
-                <item>
-                    <key>accessCode</key>
-                    <value>20086</value>
-                </item>
-                <item>
-                    <key>operCode</key>
-                    <value>zh_CN</value>
-                </item>
-                <item>
-                    <key>chargeMode</key>
-                    <value>0</value>
-                </item>
-                <item>
-                    <key>MDSPSUBEXPMODE</key>
-                    <value>1</value>
-                </item>
-                <item>
-                    <key>objectType</key>
-                    <value>1</value>
-                </item>
-                <item>
-                    <key>Starttime</key>
-                    <value>20130723082551</value>
-                </item>
-                <item>
-                    <key>isFreePeriod</key>
-                    <value>false</value>
-                </item>
-                <item>
-                    <item>
-                        <key>operatorID</key>
-                        <value>26001</value>
-                    </item>
-                    <key>payType</key>
-                    <value>0</value>
-                </item>
-                <item>
-                    <key>transactionID</key>
-                    <value>504016000001307231624304170004</value>
-                </item>
-                <item>
-                    <key>orderKey</key>
-                    <value>999000000000000194</value>
-                </item>
-                <item>
-                    <key>keyword</key>
-                    <value>BF1</value>
-                </item>
-                <item>
-                    <key>cycleEndTime</key>
-                    <value>20130723082551</value>
-                </item>
-                <item>
-                    <key>durationOfGracePeriod</key>
-                    <value>-1</value>
-                </item>
-                <item>
-                    <key>serviceAvailability</key>
-                    <value>0</value>
-                </item>
-                <item>
-                    <key>durationOfSuspendPeriod</key>
-                    <value>0</value>
-                </item>
-                <item>
-                    <key>fee</key>
-                    <value>0</value>
-                </item>
-                <item>
-                    <key>servicePayType</key>
-                    <value>0</value>
-                </item>
-                <item>
-                    <key>cycleEndTime</key>
-                    <value>20130723082551</value>
-                </item>
-                <item>
-                    <key>channelID</key>
-                    <value>1</value>
-                </item>
-                <item>
-                    <key>TraceUniqueID</key>
-                    <value>504016000001307231624304170005</value>
-                </item>
-                <item>
-                    <key>rentSuccess</key>
-                    <value>true</value>
-                </item>
-                <item>
-                    <key>try</key>
-                    <value>false</value>
-                </item>
-            </ns1:extensionInfo>
-        </ns1:syncOrderRelation>
-    </soapenv:Body>
-</soapenv:Envelope>
-`
 
 /**
  * Triggered from a message on a Cloud Pub/Sub topic.
@@ -140,7 +24,7 @@ exports.pubsubMessage = async (event, context) => {
     try {
         const message = Buffer.from(event.data, 'base64').toString()
         console.log(message);
-        await datSync(message)
+        await dataSync(message)
     } catch (e) {
         console.log("Error: ", e);
     }
@@ -148,7 +32,7 @@ exports.pubsubMessage = async (event, context) => {
 };
 
 
-const datSync = async (content) => {
+const dataSync = async (content) => {
     let cleanText = content.replace(/soapenv:/gi, "")
     cleanText = cleanText.replace(/ns1:/gi, '')
 
@@ -160,7 +44,7 @@ const datSync = async (content) => {
     let msisdn = syncOrder.userID.ID
     console.log(syncOrder, extensionInfo, msisdn)
 
-    let subscriptinKeyword = extensionInfo.find(e => e.key === 'keyword').value
+    // let subscriptionKeyword = extensionInfo.find(e => e.key === 'keyword').value
     let traceUniqueId = extensionInfo.find(e => e.key === 'TraceUniqueID').value
     let transactionId = extensionInfo.find(e => e.key === 'transactionID').value
     let orderKey = extensionInfo.find(e => e.key === 'orderKey').value
@@ -169,7 +53,7 @@ const datSync = async (content) => {
     let startTime = extensionInfo.find(e => e.key === 'Starttime').value
     let updateReason = extensionInfo.find(e => e.key === 'Starttime').value
     let accessCode = extensionInfo.find(e => e.key === 'accessCode').value
-    console.log(subscriptinKeyword, traceUniqueId, transactionId, orderKey, rentSuccess, cycleEndTime, startTime)
+    console.log(syncOrder.productID, traceUniqueId, transactionId, orderKey, rentSuccess, cycleEndTime, startTime)
 
 
 
@@ -189,7 +73,7 @@ const datSync = async (content) => {
     }
 
     //find the given subscription and rentSuccess internslly
-    let subscriptions = await getSubscriptions(subscriptinKeyword)
+    let subscriptions = await getSubscriptions(syncOrder.productID)
     let subscription = subscriptions[0]
     console.log("Subscription: ", subscription)
 
@@ -233,11 +117,6 @@ const datSync = async (content) => {
 
 }
 
-
-const main = async () => {
-    await datSync(text)
-}
-main()
-
-// gcloud functions deploy pubsubMessage --trigger-topic billing-data-sync --runtime nodejs14
-
+// module.exports = {
+//     dataSync
+// }

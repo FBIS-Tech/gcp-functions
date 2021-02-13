@@ -15,3 +15,6 @@
 
 node_modules
 sample_data.json
+test.js
+.env
+.env.example
