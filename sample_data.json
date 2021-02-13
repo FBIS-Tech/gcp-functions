@@ -1,0 +1,120 @@
+{
+    "Envelope": {
+        "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
+        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "Body": {
+            "syncOrderRelation": {
+                "xmlns:ns1": "http://www.csapi.org/schema/parlayx/data/sync/v1_0/local",
+                "userID": {
+                    "ID": "8619800000001",
+                    "type": "0"
+                },
+                "spID": "001100",
+                "productID": "1000000423",
+                "serviceID": "0011002000001100",
+                "serviceList": "0011002000001100",
+                "updateType": "1",
+                "updateTime": "20130723082551",
+                "updateDesc": "Addition",
+                "effectiveTime": "20130723082551",
+                "expiryTime": "20361231160000",
+                "extensionInfo": {
+                    "item": [
+                        {
+                            "key": "accessCode",
+                            "value": "20086"
+                        },
+                        {
+                            "key": "operCode",
+                            "value": "zh_CN"
+                        },
+                        {
+                            "key": "chargeMode",
+                            "value": "0"
+                        },
+                        {
+                            "key": "MDSPSUBEXPMODE",
+                            "value": "1"
+                        },
+                        {
+                            "key": "objectType",
+                            "value": "1"
+                        },
+                        {
+                            "key": "Starttime",
+                            "value": "20130723082551"
+                        },
+                        {
+                            "key": "isFreePeriod",
+                            "value": "false"
+                        },
+                        {
+                            "item": {
+                                "key": "operatorID",
+                                "value": "26001"
+                            },
+                            "key": "payType",
+                            "value": "0"
+                        },
+                        {
+                            "key": "transactionID",
+                            "value": "504016000001307231624304170004"
+                        },
+                        {
+                            "key": "orderKey",
+                            "value": "999000000000000194"
+                        },
+                        {
+                            "key": "keyword",
+                            "value": "BF1"
+                        },
+                        {
+                            "key": "cycleEndTime",
+                            "value": "20361231160000"
+                        },
+                        {
+                            "key": "durationOfGracePeriod",
+                            "value": "-1"
+                        },
+                        {
+                            "key": "serviceAvailability",
+                            "value": "0"
+                        },
+                        {
+                            "key": "durationOfSuspendPeriod",
+                            "value": "0"
+                        },
+                        {
+                            "key": "fee",
+                            "value": "0"
+                        },
+                        {
+                            "key": "servicePayType",
+                            "value": "0"
+                        },
+                        {
+                            "key": "cycleEndTime",
+                            "value": "20130813021650"
+                        },
+                        {
+                            "key": "channelID",
+                            "value": "1"
+                        },
+                        {
+                            "key": "TraceUniqueID",
+                            "value": "504016000001307231624304170005"
+                        },
+                        {
+                            "key": "rentSuccess",
+                            "value": "true"
+                        },
+                        {
+                            "key": "try",
+                            "value": "false"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

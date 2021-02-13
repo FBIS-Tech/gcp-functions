@@ -1,0 +1,23 @@
+{
+  "name": "data-billin-pubsub",
+  "version": "1.0.0",
+  "description": "Data Sync billing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "14.x.x"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/pubsub": "^2.8.0",
+    "dotenv": "^8.2.0",
+    "escape-html": "^1.0.3",
+    "moment": "^2.29.1",
+    "pg": "^8.5.1",
+    "uuid": "^8.3.2",
+    "xml2json": "^0.12.0"
+  }
+}
