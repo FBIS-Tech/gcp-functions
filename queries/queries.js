@@ -38,7 +38,7 @@ const getUser = async (msisdn) => {
 
 const getSubscriptions = async (productId) => {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT id,name,duration,dnd,service_id,product_id FROM subscriptions WHERE product_id='${productId}' ORDER BY id ASC`, (error, results) => {
+        pool.query(`SELECT id,name,duration,dnd,service_id,product_id,short_code FROM subscriptions WHERE product_id='${productId}' ORDER BY id ASC`, (error, results) => {
             if (error) {
                 reject(error)
             }
@@ -97,8 +97,10 @@ const addUserSubscription = async (values) => {
             start_time,
             update_desc,
             update_reason,
-            access_code) VALUES (
-                $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+            access_code,
+            active,
+            extension) VALUES (
+                $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *`,
             [uuidv4(),
             values.userId,
             values.subscriptionId,
@@ -111,7 +113,9 @@ const addUserSubscription = async (values) => {
             values.startTime,
             values.updateDesc,
             values.updateReason,
-            values.accessCode
+            values.accessCode,
+            values.active,
+            values.extension
             ], (error, results) => {
                 if (error) {
                     return reject(error)

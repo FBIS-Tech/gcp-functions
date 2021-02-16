@@ -2,7 +2,7 @@
 
 const moment = require('moment')
 const parser = require('xml2json');
-const {getUser, getRoles, addUser, addUserRole, addUserSubscription, getSubscriptions } = require('./queries/queries')
+const { getUser, getRoles, addUser, addUserRole, addUserSubscription, getSubscriptions } = require('./queries/queries')
 const {
     DATASYNC_TYPE_ADD,
     DATASYNC_TYPE_DELETE,
@@ -95,6 +95,8 @@ const dataSync = async (content) => {
                 updateDesc: syncOrder.updateDesc,
                 updateReason: updateReason,
                 accessCode: accessCode,
+                active: true,
+                extension: subscription.short_code
             }
 
             console.log(newValues)
