@@ -2,7 +2,19 @@
 
 const moment = require('moment')
 const parser = require('xml2json');
-const { getUsers, getUser, getRoles, addUser, addUserRole, addUserSubscription, getSubscriptions } = require('./queries/queries')
+const {
+    getUsers,
+    getUser,
+    getRoles,
+    addUser,
+    addUserRole,
+    addUserSubscription,
+    deleteUserSubscription,
+    updateUserSubscription,
+    blockUserSubscription,
+    unblockUserSubscription,
+    getSubscriptions
+} = require('./queries/queries')
 const {
     DATASYNC_TYPE_ADD,
     DATASYNC_TYPE_DELETE,
@@ -26,9 +38,9 @@ const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/e
             <ns1:productID>1000000423</ns1:productID>
             <ns1:serviceID>0011002000001100</ns1:serviceID>
             <ns1:serviceList>0011002000001100</ns1:serviceList>
-            <ns1:updateType>1</ns1:updateType>
+            <ns1:updateType>2</ns1:updateType>
             <ns1:updateTime>20130723082551</ns1:updateTime>
-            <ns1:updateDesc>Addition</ns1:updateDesc>
+            <ns1:updateDesc>Update Sub</ns1:updateDesc>
             <ns1:effectiveTime>20130723082551</ns1:effectiveTime>
             <ns1:expiryTime>20130723082551</ns1:expiryTime>
             <ns1:extensionInfo>
@@ -70,11 +82,11 @@ const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/e
                 </item>
                 <item>
                     <key>transactionID</key>
-                    <value>504016000001307231624304170004</value>
+                    <value>504016000001307231624304172104</value>
                 </item>
                 <item>
                     <key>orderKey</key>
-                    <value>999000000000000194</value>
+                    <value>999000000000000199</value>
                 </item>
                 <item>
                     <key>keyword</key>
@@ -106,15 +118,15 @@ const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/e
                 </item>
                 <item>
                     <key>cycleEndTime</key>
-                    <value>20130723082551</value>
+                    <value>20130725082551</value>
                 </item>
                 <item>
                     <key>channelID</key>
-                    <value>1</value>
+                    <value>3</value>
                 </item>
                 <item>
                     <key>TraceUniqueID</key>
-                    <value>504016000001307231624304170005</value>
+                    <value>504016000001307231624304172905</value>
                 </item>
                 <item>
                     <key>rentSuccess</key>
@@ -160,7 +172,7 @@ const datSync = async (content) => {
     let msisdn = syncOrder.userID.ID
     console.log(syncOrder, extensionInfo, msisdn)
 
-    let subscriptinKeyword = extensionInfo.find(e => e.key === 'keyword').value
+    let subscriptionKeyword = extensionInfo.find(e => e.key === 'keyword').value
     let traceUniqueId = extensionInfo.find(e => e.key === 'TraceUniqueID').value
     let transactionId = extensionInfo.find(e => e.key === 'transactionID').value
     let orderKey = extensionInfo.find(e => e.key === 'orderKey').value
@@ -169,7 +181,7 @@ const datSync = async (content) => {
     let startTime = extensionInfo.find(e => e.key === 'Starttime').value
     let updateReason = extensionInfo.find(e => e.key === 'Starttime').value
     let accessCode = extensionInfo.find(e => e.key === 'accessCode').value
-    console.log(subscriptinKeyword, traceUniqueId, transactionId, orderKey, rentSuccess, cycleEndTime, startTime)
+    console.log(subscriptionKeyword, traceUniqueId, transactionId, orderKey, rentSuccess, cycleEndTime, startTime)
 
 
 
@@ -189,7 +201,7 @@ const datSync = async (content) => {
     }
 
     //find the given subscription and rentSuccess internslly
-    let subscriptions = await getSubscriptions(subscriptinKeyword)
+    let subscriptions = await getSubscriptions(subscriptionKeyword)
     let subscription = subscriptions[0]
     console.log("Subscription: ", subscription)
 
@@ -216,19 +228,43 @@ const datSync = async (content) => {
             console.log(newValues)
             let userSub = await addUserSubscription(newValues)
             console.log("User sub addedd successfully: ", userSub)
-            break
+            break;
         case DATASYNC_TYPE_UPDATE:
             //update existing subscriptin
-            break
+            let updateValues = {
+                effectiveTime: moment(syncOrder.effectiveTime, DATE_FORMAT),
+                expiryTime: moment(syncOrder.expiryTime, DATE_FORMAT),
+                cycleEndTime: moment(cycleEndTime, DATE_FORMAT),
+                startTime: moment(startTime, DATE_FORMAT),
+                updateDesc: syncOrder.updateDesc,
+                traceUniqueId,
+                transactionId,
+                orderKey,
+                updateReason,
+            }
+
+            let userUpdateSub = await updateUserSubscription(subscription.id, updateValues);
+            console.log(userUpdateSub);
+            console.log(`User sub with id ${subscription.id} updated successfully: `);
+            break;
         case DATASYNC_TYPE_DELETE:
             //Delete existing subscription
-            break
+            let userDeleteSub = await deleteUserSubscription(subscription.id);
+            console.log(userDeleteSub);
+            console.log(`User sub with id ${subscription.id} deleted successfully: `);
+            break;
         case DATASYNC_TYPE_BLOCK:
             //Block existing subscription
-            break
-        case DATASYNC_TYPE_BLOCK:
+            let userBlockSub = await blockUserSubscription(subscription.id);
+            console.log(userBlockSub);
+            console.log(`User sub with id ${subscription.id} blocked successfully: `);
+            break;
+        case DATASYNC_TYPE_UNBLOCK:
             //Unblock existing subcripotion
-            break
+            let userUnblockSub = await unblockUserSubscription(subscription.id);
+            console.log(userUnblockSub);
+            console.log(`User sub with id ${subscription.id} unblocked successfully: `);
+            break;
     }
 
 }

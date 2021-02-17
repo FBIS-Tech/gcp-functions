@@ -121,6 +121,71 @@ const addUserSubscription = async (values) => {
     })
 }
 
+const updateUserSubscription = async (subscriptionId, values) => {
+    return new Promise((resolve, reject) => {
+        console.log(values);
+        pool.query(`UPDATE user_subscriptions SET
+            effective_time=$1,
+            expiry_time=$2,
+            cycle_end_time=$3,
+            start_time=$4,
+            update_desc=$5,
+            trace_unique_id=$6,
+            transaction_id=$7,
+            order_key=$8,
+            update_reason=$9 WHERE subscription_id=$10 RETURNING *`,
+            [
+                values.effectiveTime,
+                values.expiryTime,
+                values.cycleEndTime,
+                values.startTime,
+                values.updateDesc,
+                values.traceUniqueId,
+                values.transactionId,
+                values.orderKey,
+                values.updateReason,
+                subscriptionId
+            ],
+            (error, results) => {
+                if(error) return reject(error);
+                return resolve(results.rows);
+            }
+        )
+    });
+};
+
+const blockUserSubscription = async (subscriptionId) => {
+    return manageUserSubscriptionActiveStatus(false, subscriptionId)
+};
+
+const unblockUserSubscription = async (subscriptionId) => {
+    return manageUserSubscriptionActiveStatus(true, subscriptionId)
+};
+
+const manageUserSubscriptionActiveStatus = (newStatus, subscriptionId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`UPDATE user_subscriptions SET is_active=$1 WHERE subscription_id=$2  RETURNING *`,
+            [newStatus, subscriptionId],
+            (error, results) => {
+                if(error) return reject(error);
+                return resolve(results.rows);
+            }
+        );
+    });
+}
+
+const deleteUserSubscription = async (subscriptionId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`DELETE FROM user_subscriptions WHERE subscription_id=$1 RETURNING *`,
+            [subscriptionId],
+            (error, results) => {
+                if(error) return reject(error);
+                return resolve(results.rows);
+            }
+        )
+    });
+}
+
 
 
 module.exports = {
@@ -129,5 +194,10 @@ module.exports = {
     addUser,
     addUserRole,
     addUserSubscription,
-    getRoles, getSubscriptions
+    getRoles,
+    getSubscriptions,
+    updateUserSubscription,
+    blockUserSubscription,
+    unblockUserSubscription,
+    deleteUserSubscription
 }
