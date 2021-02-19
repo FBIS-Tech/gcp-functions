@@ -2,7 +2,19 @@
 
 const moment = require('moment')
 const parser = require('xml2json');
-const { getUser, getRoles, addUser, addUserRole, addUserSubscription, getSubscriptions } = require('./queries/queries')
+const {
+    getUser,
+    getRoles,
+    addUser,
+    addUserRole,
+    addUserSubscription,
+    deleteUserSubscription,
+    updateUserSubscription,
+    blockUserSubscription,
+    unblockUserSubscription,
+    getSubscriptions
+} = require('./queries/queries')
+
 const {
     DATASYNC_TYPE_ADD,
     DATASYNC_TYPE_DELETE,
@@ -42,9 +54,11 @@ const dataSync = async (content) => {
     let syncOrder = JSON.parse(json)["Envelope"]["Body"].syncOrderRelation
     let extensionInfo = syncOrder.extensionInfo.item
     let msisdn = syncOrder.userID.ID
+
     console.log(syncOrder, extensionInfo, msisdn)
 
     // let subscriptionKeyword = extensionInfo.find(e => e.key === 'keyword').value
+    let subscriptionKeyword = extensionInfo.find(e => e.key === 'keyword').value
     let traceUniqueId = extensionInfo.find(e => e.key === 'TraceUniqueID').value
     let transactionId = extensionInfo.find(e => e.key === 'transactionID').value
     let orderKey = extensionInfo.find(e => e.key === 'orderKey').value
@@ -53,6 +67,7 @@ const dataSync = async (content) => {
     let startTime = extensionInfo.find(e => e.key === 'Starttime').value
     let updateReason = extensionInfo.find(e => e.key === 'Starttime').value
     let accessCode = extensionInfo.find(e => e.key === 'accessCode').value
+
     console.log(syncOrder.productID, traceUniqueId, transactionId, orderKey, rentSuccess, cycleEndTime, startTime)
 
 
@@ -102,19 +117,43 @@ const dataSync = async (content) => {
             console.log(newValues)
             let userSub = await addUserSubscription(newValues)
             console.log("User sub addedd successfully: ", userSub)
-            break
+            break;
         case DATASYNC_TYPE_UPDATE:
             //update existing subscriptin
-            break
+            let updateValues = {
+                effectiveTime: moment(syncOrder.effectiveTime, DATE_FORMAT),
+                expiryTime: moment(syncOrder.expiryTime, DATE_FORMAT),
+                cycleEndTime: moment(cycleEndTime, DATE_FORMAT),
+                startTime: moment(startTime, DATE_FORMAT),
+                updateDesc: syncOrder.updateDesc,
+                traceUniqueId,
+                transactionId,
+                orderKey,
+                updateReason,
+            }
+
+            let userUpdateSub = await updateUserSubscription(subscription.id, updateValues);
+            console.log(userUpdateSub);
+            console.log(`User sub with id ${subscription.id} updated successfully: `);
+            break;
         case DATASYNC_TYPE_DELETE:
             //Delete existing subscription
-            break
+            let userDeleteSub = await deleteUserSubscription(subscription.id);
+            console.log(userDeleteSub);
+            console.log(`User sub with id ${subscription.id} deleted successfully: `);
+            break;
         case DATASYNC_TYPE_BLOCK:
             //Block existing subscription
-            break
-        case DATASYNC_TYPE_BLOCK:
+            let userBlockSub = await blockUserSubscription(subscription.id);
+            console.log(userBlockSub);
+            console.log(`User sub with id ${subscription.id} blocked successfully: `);
+            break;
+        case DATASYNC_TYPE_UNBLOCK:
             //Unblock existing subcripotion
-            break
+            let userUnblockSub = await unblockUserSubscription(subscription.id);
+            console.log(userUnblockSub);
+            console.log(`User sub with id ${subscription.id} unblocked successfully: `);
+            break;
     }
 
 }
