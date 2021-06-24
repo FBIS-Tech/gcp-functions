@@ -14,10 +14,10 @@ async function exportToExcel(data) {
             const worksheet = workbook.addWorksheet("RetailerStatus");
             worksheet.columns = [
                 { header: "Retail Code", key: "retailCode", width: 10 },
-                { header: "Dealer Code", key: "dealerCode", width: 25 },
-                { header: "Phone Number", key: "requestMSISDN", width: 25 },
-                { header: "Name", key: "name", width: 25 },
-                { header: "Amount", key: "amount", width: 25 },
+                { header: "Dealer Code", key: "dealerCode", width: 10 },
+                { header: "Phone Number", key: "requestMSISDN", width: 30 },
+                { header: "Name", key: "name", width: 35 },
+                { header: "Amount", key: "amount", width: 30 },
             ];
             data.forEach((element, idx) => {
                 console.log("Adding Row: ", element);
