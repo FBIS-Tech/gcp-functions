@@ -4,7 +4,7 @@
     "description": "This is a TypeScript based Cloud Functions template.",
     "main": "index.js",
     "config": {
-        "function_name": "helloWorld",
+        "function_name": "activeRetailersStatus",
         "region": "europe-west3",
         "gcp_project": "asterisk-ivr-293907",
         "runtime": "nodejs14"

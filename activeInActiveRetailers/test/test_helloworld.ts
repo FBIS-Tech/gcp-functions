@@ -2,10 +2,10 @@ import chai = require('chai')
 import chaiHttp = require('chai-http')
 import * as express from "express"
 
-import { helloWorld } from '../src/index'
+import { activeRetailersStatus } from '../src/index'
 
 const app = express()
-app.get('/', helloWorld)
+app.get('/', activeRetailersStatus)
 
 chai.use(chaiHttp)
 const expect = chai.expect

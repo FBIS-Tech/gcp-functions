@@ -19,8 +19,9 @@ async function exportToExcel(data) {
                 { header: "Name", key: "name", width: 25 },
                 { header: "Amount", key: "amount", width: 25 },
             ];
-            data.forEach(element => {
-                worksheet.addRow({
+            data.forEach((element, idx) => {
+                console.log("Adding Row: ", element);
+                worksheet.insertRow(idx + 2, {
                     retailCode: element.retailCode,
                     dealerCode: element.dealerCode,
                     requestMSISDN: element.requestMSISDN,
