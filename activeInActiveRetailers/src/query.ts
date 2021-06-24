@@ -27,7 +27,10 @@ export async function retailersStatus(start: string, end: string) {
         WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`
 
         db.query(query, (err, result) => {
-            if (err) reject(err)
+            if (err) {
+                console.log("Error: ", err)
+                reject(err)
+            }
 
             const rows = <RowDataPacket[]>result;
 
@@ -59,6 +62,7 @@ export async function retailersStatus(start: string, end: string) {
             })
 
             const retailersList = Object.keys(newObject).map(key => newObject[key])
+            console.log("Retailer List: ", retailersList)
             resolve(retailersList)
         })
     })

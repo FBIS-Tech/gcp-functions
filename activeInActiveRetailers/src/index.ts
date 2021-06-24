@@ -8,10 +8,9 @@ import { VendRequest } from './types/VendRequest'
 
 export async function activeRetailersStatus(req: Request, res: Response) {
     console.log(req)
-    const now = moment()
 
-    const startDate = moment(req.params.start) || now.subtract(7, 'days')
-    const endDate = moment(req.params.end) || now
+    const startDate = moment(req.params.start) || moment().subtract(7, 'days')
+    const endDate = moment(req.params.end) || moment().add(7, 'days')
     try {
         const data = await retailersStatus(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD')) as [VendRequest]
         const dataSorted = data.sort((a, b) => {
@@ -33,7 +32,7 @@ export async function activeRetailersStatus(req: Request, res: Response) {
         );
         res.setHeader(
             "Content-Disposition",
-            `attachment; filename=" + "retaileer-${moment().format('YYYY-MM-DD')}.xlsx`
+            `attachment; filename="active-retailers-${moment().format('YYYY-MM-DD')}.xlsx`
         );
 
         return workbook.xlsx.write(res)

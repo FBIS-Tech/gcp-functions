@@ -24,8 +24,10 @@ async function retailersStatus(start, end) {
         INNER JOIN retailers as r ON r.retail_code = mvr.retail_code
         WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`;
         db_1.db.query(query, (err, result) => {
-            if (err)
+            if (err) {
+                console.log("Error: ", err);
                 reject(err);
+            }
             const rows = result;
             const requests = rows.map((row) => {
                 const vendRequest = {
@@ -50,6 +52,7 @@ async function retailersStatus(start, end) {
                 return sum;
             });
             const retailersList = Object.keys(newObject).map(key => newObject[key]);
+            console.log("Retailer List: ", retailersList);
             resolve(retailersList);
         });
     });
