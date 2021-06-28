@@ -7,14 +7,18 @@ import { SumVendRequest } from './types/VendRequest'
 
 
 export async function activeRetailersStatus(req: Request, res: Response) {
-    console.log(req)
+    console.log("Start: ", req.query.start)
+    console.log("End: ", req.query.end)
 
-    const startDate = (req.params['start'] ? moment(req.params['start'] ) : moment().subtract(7, 'days')).format('YYYY-MM-DD HH:mm:ss')
-    const endDate = (req.params['end'] ? moment(req.params['end']) : moment()).format('YYYY-MM-DD HH:mm:ss')
+    const start = req.query.start as string
+    const end = req.query.end as string
+
+    const startDate = (start ? moment(start) : moment().subtract(7, 'days')).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+    const endDate = (end ? moment(end) : moment()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
     try {
         const data = await retailersStatus(startDate, endDate) as [SumVendRequest]
-        console.log("Data: ", data)
+        console.log("Data Count: ", data.length)
         const dataSorted = data.sort((a, b) => {
             if (a.amount < b.amount) {
                 return 1;

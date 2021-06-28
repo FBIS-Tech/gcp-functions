@@ -10,7 +10,7 @@ function objectMap(object, mapFn) {
     }, {});
 }
 async function retailersStatus(start, end) {
-    console.log(start, end);
+    console.log("Using Date: ", start, end);
     return new Promise((resolve, reject) => {
         const query = `
         SELECT 
@@ -23,6 +23,7 @@ async function retailersStatus(start, end) {
         FROM mtn_vend_requests as mvr 
         INNER JOIN retailers as r ON r.retail_code = mvr.retail_code
         WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`;
+        console.log("Query: ", query);
         db_1.db.query(query, (err, result) => {
             if (err) {
                 console.log("Error: ", err);
@@ -52,7 +53,7 @@ async function retailersStatus(start, end) {
                 return sum;
             });
             const retailersList = Object.keys(newObject).map(key => newObject[key]);
-            console.log("Retailer List: ", retailersList);
+            console.log("Retailer List Coun: ", retailersList.length);
             resolve(retailersList);
         });
     });

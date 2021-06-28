@@ -12,7 +12,7 @@ function objectMap(object: any, mapFn: any) {
 
 
 export async function retailersStatus(start: string, end: string) {
-    console.log(start, end)
+    console.log("Using Date: ", start, end)
     return new Promise((resolve, reject) => {
         const query = `
         SELECT 
@@ -25,6 +25,8 @@ export async function retailersStatus(start: string, end: string) {
         FROM mtn_vend_requests as mvr 
         INNER JOIN retailers as r ON r.retail_code = mvr.retail_code
         WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`
+
+        console.log("Query: ", query)
 
         db.query(query, (err, result) => {
             if (err) {
@@ -62,7 +64,7 @@ export async function retailersStatus(start: string, end: string) {
             })
 
             const retailersList = Object.keys(newObject).map(key => newObject[key])
-            console.log("Retailer List: ", retailersList)
+            console.log("Retailer List Coun: ", retailersList.length)
             resolve(retailersList)
         })
     })

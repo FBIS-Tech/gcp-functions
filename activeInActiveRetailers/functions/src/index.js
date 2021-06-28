@@ -5,12 +5,15 @@ const moment = require("moment");
 const query_1 = require("./query");
 const objectToExcel_1 = require("./objectToExcel");
 async function activeRetailersStatus(req, res) {
-    console.log(req);
-    const startDate = (req.params['start'] ? moment(req.params['start']) : moment().subtract(7, 'days')).format('YYYY-MM-DD');
-    const endDate = (req.params['end'] ? moment(req.params['end']) : moment()).format('YYYY-MM-DD');
+    console.log("Start: ", req.query.start);
+    console.log("End: ", req.query.end);
+    const start = req.query.start;
+    const end = req.query.end;
+    const startDate = (start ? moment(start) : moment().subtract(7, 'days')).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    const endDate = (end ? moment(end) : moment()).endOf('day').format('YYYY-MM-DD HH:mm:ss');
     try {
         const data = await query_1.retailersStatus(startDate, endDate);
-        console.log("Data: ", data);
+        console.log("Data Count: ", data.length);
         const dataSorted = data.sort((a, b) => {
             if (a.amount < b.amount) {
                 return 1;
