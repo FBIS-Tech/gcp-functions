@@ -9,8 +9,8 @@ import { SumVendRequest } from './types/VendRequest'
 export async function activeRetailersStatus(req: Request, res: Response) {
     console.log(req)
 
-    const startDate = (req.params['start'] ? moment(req.params['start'] ) : moment().subtract(7, 'days')).format('YYYY-MM-DD')
-    const endDate = (req.params['end'] ? moment(req.params['end']) : moment()).format('YYYY-MM-DD')
+    const startDate = (req.params['start'] ? moment(req.params['start'] ) : moment().subtract(7, 'days')).format('YYYY-MM-DD HH:mm:ss')
+    const endDate = (req.params['end'] ? moment(req.params['end']) : moment()).format('YYYY-MM-DD HH:mm:ss')
 
     try {
         const data = await retailersStatus(startDate, endDate) as [SumVendRequest]
