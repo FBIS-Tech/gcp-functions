@@ -25,7 +25,7 @@ export async function salesTransactions(start: string, end: string) {
 
       const rows = <RowDataPacket[]>result;
 
-      const requests = rows.map((row) => {
+      const logs = rows.map((row) => {
         const salesRequest: SalesRequest = {
           requestMSISDN: row.request_msisdn,
           destinationMSISDN: row.destination_msisdn,
@@ -39,34 +39,7 @@ export async function salesTransactions(start: string, end: string) {
         return salesRequest;
       });
 
-      const groupedRequests = requests
-        .reduce(Reducer.groupBy("retailCode"), Reducer.Map())
-        .toObject();
-
-      const newObject = objectMap(groupedRequests, (values: [SalesRequest]) => {
-        const total = values
-          .map((v) => v.amount)
-          .reduce(
-            (accumulator, currentValue) =>
-              Number(accumulator) + Number(currentValue)
-          );
-
-        const sum: SumSalesRequest = {
-          requestMSISDN: values[0].requestMSISDN,
-          destinationMSISDN: values[0].destinationMSISDN,
-          retailCode: values[0].retailCode,
-          dealerCode: values[0].dealerCode,
-          amount: Number(total),
-          dateCreated: values[0].dateCreated,
-          productCode: values[0].productCode,
-          channel: values[0].channel,
-        };
-        return sum;
-      });
-
-      const retailersList = Object.keys(newObject).map((key) => newObject[key]);
-      console.log("Retailer List: ", retailersList);
-      resolve(retailersList);
+      resolve(logs);
     });
   });
 }
