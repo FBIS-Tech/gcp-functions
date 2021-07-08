@@ -6,7 +6,7 @@ import { salesTransactions } from "./src/query";
 import { exportToExcel } from "./src/objectToExcel";
 
 import * as moment from "moment";
-import { SalesRequest, SumSalesRequest } from "./src/types/SalesRequest";
+import { SalesRequest } from "./src/types/SalesRequest";
 
 console.log("Hello world!");
 
