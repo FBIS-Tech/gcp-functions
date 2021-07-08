@@ -2,8 +2,8 @@ export interface Retailer {
     name: string,
     retailCode: string,
     msisdn: number,
-    dealer: string
-    ussd: string,
+    dealerName: string
+    dealerCode: string,
     walletBalance: number,
     dateJoined: string
 }

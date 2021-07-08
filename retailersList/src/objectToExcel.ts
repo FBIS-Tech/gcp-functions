@@ -17,8 +17,8 @@ export async function exportToExcel(data: [Retailer]) {
                 { header: "Name", key: "name", width: 25 },
                 { header: "Retail Code", key: "retailCode", width: 5 },
                 { header: "Phone Number", key: "msisdn", width: 10 },
-                { header: "Dealer", key: "dealer", width: 25 },
-                { header: "USSD", key: "ussd", width: 5 },
+                { header: "Dealer", key: "dealerName", width: 25 },
+                { header: "DelerCode", key: "dealerCode", width: 5 },
                 { header: "Balance", key: "walletBalance", width: 20 },
                 { header: "Date Joined", key: "dateJoined", width: 10 },
             ];
@@ -31,8 +31,8 @@ export async function exportToExcel(data: [Retailer]) {
                     name: element.name,
                     retailCode: element.retailCode,
                     msisdn: element.msisdn,
-                    dealer: element.dealer,
-                    ussd: element.ussd,
+                    dealerName: element.dealerName,
+                    dealerCode: element.dealerCode,
                     walletBalance: element.walletBalance,
                     dateJoined: element.dateJoined
                 });

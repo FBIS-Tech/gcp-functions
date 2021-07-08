@@ -1,3 +1,4 @@
+import moment = require('moment');
 import { RowDataPacket } from 'mysql2';
 import { db } from './db'
 import { Retailer } from './types/Retailer'
@@ -7,14 +8,17 @@ export async function retailerList() {
     return new Promise((resolve, reject) => {
         const query = `
         SELECT
-        retailers.*,
-        dealers.name as dealer_name,
-        wallets.available_balance
-        FROM retailers
-        INNER JOIN dealers ON retailers.dealer_id = dealers.id
-        INNER JOIN wallets ON retailers.user_id = wallets.user_id
-        ORDER BY name ASC
-        `
+        r.name,
+        r.retail_code as retailer_code,
+        r.msisdn,
+        r.created_at,
+        d.name as dealer_name,
+        d.retail_code as dealer_code,
+        w.available_balance as balance
+        FROM retailers as r
+        INNER JOIN dealers as d ON r.dealer_id = d.id
+        INNER JOIN wallets as w ON r.user_id = w.user_id
+        ORDER BY dealer_code ASC`
 
         db.query(query, (err, result) => {
             if (err) {
@@ -29,12 +33,12 @@ export async function retailerList() {
                     name: row.name,
                     retailCode: row.retail_code,
                     msisdn: row.msisdn,
-                    dealer: row.dealer_name,
-                    ussd: row.ussd,
-                    walletBalance: row.wallet_balance,
-                    dateJoined: row.created_at
+                    dealerName: row.dealer_name,
+                    dealerCode: row.dealer_code,
+                    walletBalance: row.balance,
+                    dateJoined: moment(row.created_at).format("YYYY-MM-DD")
                 }
-                
+
                 return Retailer
             })
 

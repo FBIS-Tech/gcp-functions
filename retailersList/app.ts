@@ -7,8 +7,6 @@ import { exportToExcel } from './src/objectToExcel'
 
 import { Retailer } from "./src/types/Retailer";
 
-console.log("Hello world!")
-
 retailerList()
     .then(result => {
         console.log(result)
