@@ -9,7 +9,7 @@ export async function retailerList() {
         const query = `
         SELECT
         r.name,
-        r.retail_code as retailer_code,
+        r.retail_code as retail_code,
         r.msisdn,
         r.created_at,
         d.name as dealer_name,
