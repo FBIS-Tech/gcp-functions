@@ -2,10 +2,10 @@ import chai = require("chai");
 import chaiHttp = require("chai-http");
 import * as express from "express";
 
-import { salesTranscationReport } from "../src/index";
+import { salesTransactionReport } from "../src/index";
 
 const app = express();
-app.get("/", salesTranscationReport);
+app.get("/", salesTransactionReport);
 
 chai.use(chaiHttp);
 const expect = chai.expect;

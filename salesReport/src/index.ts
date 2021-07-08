@@ -5,22 +5,21 @@ import { salesTransactions } from "./query";
 import { exportToExcel } from "./objectToExcel";
 import { SalesRequest } from "./types/SalesRequest";
 
-export async function salesTranscationReport(req: Request, res: Response) {
+export async function salesTransactionReport(req: Request, res: Response) {
   console.log(req);
 
   const startDate = (
     req.params["start"]
       ? moment(req.params["start"])
-      : moment().subtract(7, "days")
+      : moment().subtract(6, "days")
   ).startOf('day').format('YYYY-MM-DD HH:mm:ss')
   const endDate = (
     req.params["end"] ? moment(req.params["end"]) : moment()
   ).endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
   try {
-    const data = (await salesTransactions(startDate, endDate)) as [
-      SalesRequest
-    ];
+    const data = await salesTransactions(startDate, endDate) as [SalesRequest];
+
     console.log("Data: ", data);
     const dataSorted = data.sort((a, b) => {
       if (a.amount < b.amount) {
@@ -51,3 +50,6 @@ export async function salesTranscationReport(req: Request, res: Response) {
     res.send(err);
   }
 }
+
+
+// https://europe-west3-asterisk-ivr-293907.cloudfunctions.net/salesTransactionReport?start=2021-07-01&end=2021-07-02

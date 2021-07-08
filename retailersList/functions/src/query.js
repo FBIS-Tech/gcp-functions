@@ -8,7 +8,7 @@ async function retailerList() {
         const query = `
         SELECT
         r.name,
-        r.retail_code as retailer_code,
+        r.retail_code,
         r.msisdn,
         r.created_at,
         d.name as dealer_name,
@@ -17,7 +17,7 @@ async function retailerList() {
         FROM retailers as r
         INNER JOIN dealers as d ON r.dealer_id = d.id
         INNER JOIN wallets as w ON r.user_id = w.user_id
-        ORDER BY dealer_code ASC`;
+        ORDER BY dealer_code, name ASC`;
         db_1.db.query(query, (err, result) => {
             if (err) {
                 console.log("Error: ", err);

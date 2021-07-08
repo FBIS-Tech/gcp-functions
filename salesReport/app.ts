@@ -10,14 +10,15 @@ import { SalesRequest } from "./src/types/SalesRequest";
 
 console.log("Hello world!");
 
-const now = moment();
+const startDate = moment().subtract(6, "days").startOf('day')
+const endDate = moment().endOf('day')
 
-const startDate = now.subtract(7, "days").startOf('day').format('YYYY-MM-DD HH:mm:ss')
-const endDate = now.endOf('day').format('YYYY-MM-DD HH:mm:ss')
+const startDateFmt = startDate.format('YYYY-MM-DD HH:mm:ss')
+const endDateFmt = endDate.format('YYYY-MM-DD HH:mm:ss')
 
-salesTransactions(startDate, endDate)
+salesTransactions(startDateFmt, endDateFmt)
   .then((result) => {
-    
+
     console.log(result);
     const data = result as [SalesRequest];
 
@@ -26,7 +27,7 @@ salesTransactions(startDate, endDate)
         console.log(workbook);
 
         (workbook as excel.Workbook).xlsx
-          .writeFile(`sales-report-${moment().format("YYYY-MM-DD")}.xlsx`)
+          .writeFile(`sales-report-${startDate.format('YYYY-MM-DD')}-to-${endDate.format('YYYY-MM-DD')}.xlsx`)
           .then(() => {
             console.log("Writing file done");
           })

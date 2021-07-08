@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.salesTranscationReport = void 0;
+exports.salesTransactionReport = void 0;
 const moment = require("moment");
 const query_1 = require("./query");
 const objectToExcel_1 = require("./objectToExcel");
-async function salesTranscationReport(req, res) {
+async function salesTransactionReport(req, res) {
     console.log(req);
     const startDate = (req.params["start"]
         ? moment(req.params["start"])
-        : moment().subtract(7, "days")).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+        : moment().subtract(6, "days")).startOf('day').format('YYYY-MM-DD HH:mm:ss');
     const endDate = (req.params["end"] ? moment(req.params["end"]) : moment()).endOf('day').format('YYYY-MM-DD HH:mm:ss');
     try {
-        const data = (await query_1.salesTransactions(startDate, endDate));
+        const data = await query_1.salesTransactions(startDate, endDate);
         console.log("Data: ", data);
         const dataSorted = data.sort((a, b) => {
             if (a.amount < b.amount) {
@@ -34,4 +34,4 @@ async function salesTranscationReport(req, res) {
         res.send(err);
     }
 }
-exports.salesTranscationReport = salesTranscationReport;
+exports.salesTransactionReport = salesTransactionReport;

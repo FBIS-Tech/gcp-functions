@@ -13,7 +13,7 @@ export async function activeRetailersStatus(req: Request, res: Response) {
     const start = req.query.start as string
     const end = req.query.end as string
 
-    const startDate = (start ? moment(start) : moment().subtract(7, 'days')).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+    const startDate = (start ? moment(start) : moment().subtract(6, 'days')).startOf('day').format('YYYY-MM-DD HH:mm:ss')
     const endDate = (end ? moment(end) : moment()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
     try {
