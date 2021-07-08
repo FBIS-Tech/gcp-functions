@@ -3,7 +3,7 @@ import * as moment from "moment";
 import * as excel from "exceljs";
 import { salesTransactions } from "./query";
 import { exportToExcel } from "./objectToExcel";
-import { SumSalesRequest } from "./types/SalesRequest";
+import { SalesRequest } from "./types/SalesRequest";
 
 export async function salesTranscationReport(req: Request, res: Response) {
   console.log(req);
@@ -19,7 +19,7 @@ export async function salesTranscationReport(req: Request, res: Response) {
 
   try {
     const data = (await salesTransactions(startDate, endDate)) as [
-      SumSalesRequest
+      SalesRequest
     ];
     console.log("Data: ", data);
     const dataSorted = data.sort((a, b) => {
