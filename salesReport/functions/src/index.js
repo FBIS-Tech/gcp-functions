@@ -8,8 +8,8 @@ async function salesTranscationReport(req, res) {
     console.log(req);
     const startDate = (req.params["start"]
         ? moment(req.params["start"])
-        : moment().subtract(7, "days")).format("YYYY-MM-DD");
-    const endDate = (req.params["end"] ? moment(req.params["end"]) : moment()).format("YYYY-MM-DD");
+        : moment().subtract(7, "days")).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    const endDate = (req.params["end"] ? moment(req.params["end"]) : moment()).endOf('day').format('YYYY-MM-DD HH:mm:ss');
     try {
         const data = (await query_1.salesTransactions(startDate, endDate));
         console.log("Data: ", data);
@@ -24,7 +24,7 @@ async function salesTranscationReport(req, res) {
         });
         const workbook = (await objectToExcel_1.exportToExcel(dataSorted));
         res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        res.setHeader("Content-Disposition", `attachment; filename="active-retailers-${startDate}-${endDate}.xlsx`);
+        res.setHeader("Content-Disposition", `attachment; filename="sales-report-${startDate}-${endDate}.xlsx`);
         return workbook.xlsx.write(res).then(() => {
             res.status(200).end();
         });

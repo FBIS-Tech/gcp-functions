@@ -5,7 +5,7 @@ import { exportToExcel } from './objectToExcel'
 import { Retailer } from './types/Retailer'
 
 
-export async function getRetailerList(req: Request, res: Response) {
+export async function retailersRecord(req: Request, res: Response) {
     console.log(req)
 
     try {

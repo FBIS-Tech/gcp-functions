@@ -29,7 +29,7 @@ export async function retailerList() {
             const rows = <RowDataPacket[]>result;
 
             const requests = rows.map((row) => {
-                const Retailer: Retailer = {
+                const retailer: Retailer = {
                     name: row.name,
                     retailCode: row.retail_code,
                     msisdn: row.msisdn,
@@ -39,7 +39,7 @@ export async function retailerList() {
                     dateJoined: moment(row.created_at).format("YYYY-MM-DD")
                 }
 
-                return Retailer
+                return retailer
             })
 
             const retailersList = requests

@@ -12,8 +12,8 @@ console.log("Hello world!")
 
 const now = moment()
 
-const startDate = now.subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss')
-const endDate = now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+const startDate = now.subtract(7, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss')
+const endDate = now.add(7, 'days').endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
 retailersStatus(startDate, endDate)
     .then(result => {

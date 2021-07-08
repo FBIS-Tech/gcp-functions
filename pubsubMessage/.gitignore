@@ -1,3 +1,4 @@
 .env
 generateUUIDs.js
 /node_modules
+*.xlsx

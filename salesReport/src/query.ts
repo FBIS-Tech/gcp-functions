@@ -1,6 +1,6 @@
 import { RowDataPacket } from "mysql2";
 import { db } from "./db";
-import { SalesRequest, SumSalesRequest } from "./types/SalesRequest";
+import { SalesRequest } from "./types/SalesRequest";
 import { Reducer } from "declarative-js";
 
 function objectMap(object: any, mapFn: any) {
@@ -14,8 +14,19 @@ export async function salesTransactions(start: string, end: string) {
   console.log(start, end);
   return new Promise((resolve, reject) => {
     const query = `
-    SELECT mvr.id, mvr.request_msisdn, mvr.destination_msisdn, mvr.retail_code, mvr.dealer_code, mvr.amount, mvr.created_at, wt.product_code, wt.channel FROM mtn_vend_requests as mvr LEFT JOIN wallet_transactions as wt ON mvr.transaction_reference = wt.transaction_reference;
-        WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`;
+                  SELECT 
+                  mvr.id, 
+                  mvr.request_msisdn, 
+                  mvr.destination_msisdn, 
+                  mvr.retail_code, 
+                  mvr.dealer_code, 
+                  mvr.amount, 
+                  mvr.created_at, 
+                  wt.product_code, 
+                  wt.channel 
+                  FROM mtn_vend_requests as mvr 
+                  LEFT JOIN wallet_transactions as wt ON mvr.transaction_reference = wt.transaction_reference
+                  WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`
 
     db.query(query, (err, result) => {
       if (err) {

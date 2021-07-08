@@ -5,7 +5,7 @@ const chaiHttp = require("chai-http");
 const express = require("express");
 const index_1 = require("../src/index");
 const app = express();
-app.get('/', index_1.activeRetailersStatus);
+app.get('/', index_1.retailersRecord);
 chai.use(chaiHttp);
 const expect = chai.expect;
 describe('Hello function', () => {

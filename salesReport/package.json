@@ -6,7 +6,7 @@
   "config": {
     "function_name": "salesTranscationReport",
     "region": "europe-west3",
-    "gcp_project": "retailcode-salesreport",
+    "gcp_project": "asterisk-ivr-293907",
     "runtime": "nodejs14"
   },
   "scripts": {

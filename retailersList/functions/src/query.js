@@ -1,28 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.retailersStatus = void 0;
+exports.retailerList = void 0;
+const moment = require("moment");
 const db_1 = require("./db");
-const declarative_js_1 = require("declarative-js");
-function objectMap(object, mapFn) {
-    return Object.keys(object).reduce(function (result, key) {
-        result[key] = mapFn(object[key]);
-        return result;
-    }, {});
-}
-async function retailersStatus(start, end) {
-    console.log(start, end);
+async function retailerList() {
     return new Promise((resolve, reject) => {
         const query = `
-        SELECT 
-        mvr.id,
-        mvr.request_msisdn,
-        mvr.retail_code,
-        mvr.dealer_code,
-        mvr.amount,
-        r.name
-        FROM mtn_vend_requests as mvr 
-        INNER JOIN retailers as r ON r.retail_code = mvr.retail_code
-        WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`;
+        SELECT
+        r.name,
+        r.retail_code as retailer_code,
+        r.msisdn,
+        r.created_at,
+        d.name as dealer_name,
+        d.retail_code as dealer_code,
+        w.available_balance as balance
+        FROM retailers as r
+        INNER JOIN dealers as d ON r.dealer_id = d.id
+        INNER JOIN wallets as w ON r.user_id = w.user_id
+        ORDER BY dealer_code ASC`;
         db_1.db.query(query, (err, result) => {
             if (err) {
                 console.log("Error: ", err);
@@ -30,31 +25,21 @@ async function retailersStatus(start, end) {
             }
             const rows = result;
             const requests = rows.map((row) => {
-                const vendRequest = {
+                const retailer = {
                     name: row.name,
-                    requestMSISDN: row.request_msisdn,
                     retailCode: row.retail_code,
+                    msisdn: row.msisdn,
+                    dealerName: row.dealer_name,
                     dealerCode: row.dealer_code,
-                    amount: row.amount,
+                    walletBalance: row.balance,
+                    dateJoined: moment(row.created_at).format("YYYY-MM-DD")
                 };
-                return vendRequest;
+                return retailer;
             });
-            const groupedRequests = requests.reduce(declarative_js_1.Reducer.groupBy('retailCode'), declarative_js_1.Reducer.Map()).toObject();
-            const newObject = objectMap(groupedRequests, (values) => {
-                const total = values.map(v => v.amount).reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue));
-                const sum = {
-                    name: values[0].name,
-                    requestMSISDN: values[0].requestMSISDN,
-                    retailCode: values[0].retailCode,
-                    dealerCode: values[0].dealerCode,
-                    amount: Number(total),
-                };
-                return sum;
-            });
-            const retailersList = Object.keys(newObject).map(key => newObject[key]);
+            const retailersList = requests;
             console.log("Retailer List: ", retailersList);
             resolve(retailersList);
         });
     });
 }
-exports.retailersStatus = retailersStatus;
+exports.retailerList = retailerList;

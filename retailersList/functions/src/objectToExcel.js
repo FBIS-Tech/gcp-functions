@@ -11,22 +11,26 @@ async function exportToExcel(data) {
             workbook.created = new Date();
             workbook.modified = new Date();
             workbook.lastPrinted = new Date();
-            const worksheet = workbook.addWorksheet("RetailerStatus");
+            const worksheet = workbook.addWorksheet("RetailerList");
             worksheet.columns = [
-                { header: "Retail Code", key: "retailCode", width: 10 },
-                { header: "Dealer Code", key: "dealerCode", width: 10 },
-                { header: "Phone Number", key: "requestMSISDN", width: 30 },
-                { header: "Name", key: "name", width: 35 },
-                { header: "Amount", key: "amount", width: 30 },
+                { header: "Name", key: "name", width: 25 },
+                { header: "Retail Code", key: "retailCode", width: 5 },
+                { header: "Phone Number", key: "msisdn", width: 10 },
+                { header: "Dealer", key: "dealerName", width: 25 },
+                { header: "DelerCode", key: "dealerCode", width: 5 },
+                { header: "Balance", key: "walletBalance", width: 20 },
+                { header: "Date Joined", key: "dateJoined", width: 10 },
             ];
             data.forEach((element, idx) => {
                 console.log("Adding Row: ", element);
                 worksheet.insertRow(idx + 2, {
-                    retailCode: element.retailCode,
-                    dealerCode: element.dealerCode,
-                    requestMSISDN: element.requestMSISDN,
                     name: element.name,
-                    amount: element.amount
+                    retailCode: element.retailCode,
+                    msisdn: element.msisdn,
+                    dealerName: element.dealerName,
+                    dealerCode: element.dealerCode,
+                    walletBalance: element.walletBalance,
+                    dateJoined: element.dateJoined
                 });
             });
             resolve(workbook);

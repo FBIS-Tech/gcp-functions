@@ -25,7 +25,6 @@ export async function exportToExcel(data: [SumVendRequest]) {
 
             // // Add Array Rows
             data.forEach((element, idx) => {
-                console.log("Adding Row: ", element)
                 worksheet.insertRow(idx + 2, {
                     retailCode: element.retailCode,
                     dealerCode: element.dealerCode,

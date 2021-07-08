@@ -29,5 +29,6 @@ retailerList()
     })
 
 //npx ts-node app.ts
-//npm run deploy --prefix functions/src/ 
+//
+//npm run build && npm run deploy --prefix functions/src/ 
 //projects/asterisk-ivr-293907/locations/europe-west3/connectors/gcp-fucntoin-vpc-c

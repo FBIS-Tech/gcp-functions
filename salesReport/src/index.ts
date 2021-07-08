@@ -12,10 +12,10 @@ export async function salesTranscationReport(req: Request, res: Response) {
     req.params["start"]
       ? moment(req.params["start"])
       : moment().subtract(7, "days")
-  ).format("YYYY-MM-DD");
+  ).startOf('day').format('YYYY-MM-DD HH:mm:ss')
   const endDate = (
     req.params["end"] ? moment(req.params["end"]) : moment()
-  ).format("YYYY-MM-DD");
+  ).endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
   try {
     const data = (await salesTransactions(startDate, endDate)) as [
@@ -40,7 +40,7 @@ export async function salesTranscationReport(req: Request, res: Response) {
     );
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="active-retailers-${startDate}-${endDate}.xlsx`
+      `attachment; filename="sales-report-${startDate}-${endDate}.xlsx`
     );
 
     return workbook.xlsx.write(res).then(() => {
