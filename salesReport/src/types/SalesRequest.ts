@@ -9,4 +9,3 @@ export interface SalesRequest {
   channel: string;
 }
 
-export interface SumSalesRequest extends SalesRequest {}
