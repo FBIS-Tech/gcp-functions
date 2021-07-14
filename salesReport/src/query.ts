@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { db } from "./db";
 import { SalesRequest } from "./types/SalesRequest";
 import { Reducer } from "declarative-js";
+import * as moment from "moment";
 
 function objectMap(object: any, mapFn: any) {
   return Object.keys(object).reduce(function (result: any, key: any) {
@@ -12,6 +13,13 @@ function objectMap(object: any, mapFn: any) {
 
 export async function salesTransactions(start: string, end: string) {
   console.log(start, end);
+  const listOfDates = splitDates(start, end);
+
+  listOfDates.forEach((date) => {
+    const startOfDate = date.startOf("day").toString();
+    const endOfDate = date.endOf("day");
+  });
+
   return new Promise((resolve, reject) => {
     const query = `
                   SELECT 
@@ -26,7 +34,7 @@ export async function salesTransactions(start: string, end: string) {
                   wt.channel 
                   FROM mtn_vend_requests as mvr 
                   LEFT JOIN wallet_transactions as wt ON mvr.transaction_reference = wt.transaction_reference
-                  WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`
+                  WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`;
 
     db.query(query, (err, result) => {
       if (err) {
@@ -53,4 +61,21 @@ export async function salesTransactions(start: string, end: string) {
       resolve(logs);
     });
   });
+}
+
+function splitDates(startDate: string, endDate: string) {
+  const formattedStart = moment(startDate, "YYYY-MM-DD");
+  const formattedEnd = moment(endDate, "YYYY-MM-DD");
+
+  const listOfDates = new Array();
+
+  while (true) {
+    const tempDate = formattedStart.add(1, "days");
+    if (tempDate <= formattedEnd) {
+      listOfDates.push(tempDate);
+    } else {
+      break;
+    }
+  }
+  return listOfDates;
 }
