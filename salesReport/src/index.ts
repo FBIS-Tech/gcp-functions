@@ -8,17 +8,17 @@ import { SalesRequest } from "./types/SalesRequest";
 export async function salesTransactionReport(req: Request, res: Response) {
   console.log(req);
 
-  const startDate = (
-    req.params["start"]
-      ? moment(req.params["start"])
-      : moment().subtract(6, "days")
-  ).startOf('day').format('YYYY-MM-DD HH:mm:ss')
-  const endDate = (
-    req.params["end"] ? moment(req.params["end"]) : moment()
-  ).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+  const start = req.query.start as string
+  const end = req.query.end as string
+
+  const startDate = (start ? moment(start) : moment().subtract(6, 'days')).startOf('day')
+  const endDate = (end ? moment(end) : moment()).endOf('day')
+
+  const startDatefmt = startDate.format('YYYY-MM-DD HH:mm:ss')
+  const endDatefmt = endDate.format('YYYY-MM-DD HH:mm:ss')
 
   try {
-    const data = await salesTransactions(startDate, endDate) as [SalesRequest];
+    const data = await salesTransactions(startDatefmt, endDatefmt) as [SalesRequest];
 
     console.log("Data: ", data);
     const dataSorted = data.sort((a, b) => {
@@ -39,7 +39,7 @@ export async function salesTransactionReport(req: Request, res: Response) {
     );
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="sales-report-${startDate}-${endDate}.xlsx`
+      `attachment; filename="sales-report-${startDate.format('YYYY-MM-DD')}-to-${endDate.format('YYYY-MM-DD')}.xlsx`
     );
 
     return workbook.xlsx.write(res).then(() => {
@@ -52,4 +52,4 @@ export async function salesTransactionReport(req: Request, res: Response) {
 }
 
 
-// https://europe-west3-asterisk-ivr-293907.cloudfunctions.net/salesTransactionReport?start=2021-07-01&end=2021-07-02
+// https://europe-west3-asterisk-ivr-293907.cloudfunctions.net/salesTransactionReport?start=2021-07-01&end=2021-07-07

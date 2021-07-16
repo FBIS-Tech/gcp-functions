@@ -1,8 +1,7 @@
+import * as  moment from "moment";
 import { RowDataPacket } from "mysql2";
 import { db } from "./db";
 import { SalesRequest } from "./types/SalesRequest";
-import { Reducer } from "declarative-js";
-
 function objectMap(object: any, mapFn: any) {
   return Object.keys(object).reduce(function (result: any, key: any) {
     result[key] = mapFn(object[key]);
@@ -23,11 +22,18 @@ export async function salesTransactions(start: string, end: string) {
                   mvr.amount, 
                   mvr.created_at, 
                   wt.product_code, 
-                  wt.channel 
+                  wt.channel,
+                  d.name as dealer_name,
+                  pt.territory as dealer_territory
                   FROM mtn_vend_requests as mvr 
                   LEFT JOIN wallet_transactions as wt ON mvr.transaction_reference = wt.transaction_reference
-                  WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`
+                  LEFT JOIN dealers as d ON mvr.dealer_code = d.retail_code
+                  LEFT JOIN partner_territories as pt ON d.territory = pt.id
+                  WHERE (mvr.created_at BETWEEN '${start}' AND '${end}') AND mvr.status = 'SUCCESSFUL'
+                  ORDER BY mvr.id ASC
+                  LIMIT 0, 10000;`
 
+    console.log(moment().format('HH:mm:ss'))
     db.query(query, (err, result) => {
       if (err) {
         console.log("Error: ", err);
@@ -42,14 +48,17 @@ export async function salesTransactions(start: string, end: string) {
           destinationMSISDN: row.destination_msisdn,
           retailCode: row.retail_code,
           dealerCode: row.dealer_code,
+          dealerName: row.dealer_name,
+          territory: row.dealer_territory,
           amount: row.amount,
-          dateCreated: row.created_at,
           productCode: row.product_code,
           channel: row.channel,
+          dateCreated: row.created_at,
         };
         return salesRequest;
       });
 
+      console.log(moment().format('HH:mm:ss'))
       resolve(logs);
     });
   });

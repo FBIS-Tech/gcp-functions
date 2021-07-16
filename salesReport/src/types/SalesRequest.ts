@@ -3,6 +3,8 @@ export interface SalesRequest {
   destinationMSISDN: string;
   retailCode: string;
   dealerCode: string;
+  dealerName: string;
+  territory: string;
   amount: number;
   dateCreated: string;
   productCode: string;
