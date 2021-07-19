@@ -1,7 +1,7 @@
 import * as excel from "exceljs";
 import { SalesRequest } from "./types/SalesRequest";
 
-export async function exportToExcel(data: [SalesRequest]) {
+export async function exportToExcel(data: SalesRequest[]) {
   return new Promise((resolve, reject) => {
     try {
       const workbook = new excel.Workbook();

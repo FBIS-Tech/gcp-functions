@@ -1,24 +1,12 @@
 import { RowDataPacket } from "mysql2";
 import { db } from "./db";
 import { SalesRequest } from "./types/SalesRequest";
-import { Reducer } from "declarative-js";
-import * as moment from "moment";
 
-function objectMap(object: any, mapFn: any) {
-  return Object.keys(object).reduce(function (result: any, key: any) {
-    result[key] = mapFn(object[key]);
-    return result;
-  }, {});
-}
-
-export async function salesTransactions(start: string, end: string) {
+export async function salesTransactions(
+  start: string,
+  end: string
+): Promise<SalesRequest[]> {
   console.log(start, end);
-  const listOfDates = splitDates(start, end);
-
-  listOfDates.forEach((date) => {
-    const startOfDate = date.startOf("day").toString();
-    const endOfDate = date.endOf("day");
-  });
 
   return new Promise((resolve, reject) => {
     const query = `
@@ -44,7 +32,7 @@ export async function salesTransactions(start: string, end: string) {
 
       const rows = <RowDataPacket[]>result;
 
-      const logs = rows.map((row) => {
+      const logs: SalesRequest[] = rows.map((row) => {
         const salesRequest: SalesRequest = {
           requestMSISDN: row.request_msisdn,
           destinationMSISDN: row.destination_msisdn,
@@ -61,21 +49,4 @@ export async function salesTransactions(start: string, end: string) {
       resolve(logs);
     });
   });
-}
-
-function splitDates(startDate: string, endDate: string) {
-  const formattedStart = moment(startDate, "YYYY-MM-DD");
-  const formattedEnd = moment(endDate, "YYYY-MM-DD");
-
-  const listOfDates = new Array();
-
-  while (true) {
-    const tempDate = formattedStart.add(1, "days");
-    if (tempDate <= formattedEnd) {
-      listOfDates.push(tempDate);
-    } else {
-      break;
-    }
-  }
-  return listOfDates;
 }
