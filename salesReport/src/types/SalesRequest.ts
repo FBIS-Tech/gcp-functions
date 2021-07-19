@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export interface SalesRequest {
   requestMSISDN: string;
   destinationMSISDN: string;
@@ -10,4 +12,3 @@ export interface SalesRequest {
   productCode: string;
   channel: string;
 }
-
