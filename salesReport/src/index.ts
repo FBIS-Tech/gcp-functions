@@ -3,10 +3,6 @@ import * as moment from "moment";
 import * as excel from "exceljs";
 import { salesTransactions } from "./query";
 import { exportToExcel } from "./objectToExcel";
-import { SalesRequest } from "./types/SalesRequest";
-import { promises } from "fs";
-import { type } from "os";
-import { TestReturn } from "./types/SalesRequest";
 
 export async function salesTransactionReport(req: Request, res: Response) {
   console.log(req);
@@ -18,6 +14,7 @@ export async function salesTransactionReport(req: Request, res: Response) {
   )
     .startOf("day")
     .format("YYYY-MM-DD HH:mm:ss");
+
   const endDate = (req.params["end"] ? moment(req.params["end"]) : moment())
     .endOf("day")
     .format("YYYY-MM-DD HH:mm:ss");
@@ -47,7 +44,7 @@ export async function salesTransactionReport(req: Request, res: Response) {
     );
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="sales-report-${startDate.format('YYYY-MM-DD')}-to-${endDate.format('YYYY-MM-DD')}.xlsx`
+      `attachment; filename="sales-report-${startDate}-to-${endDate}.xlsx`
     );
 
     return workbook.xlsx.write(res).then(() => {
@@ -79,7 +76,7 @@ function splitDates(startDate: string, endDate: string): Array<moment.Moment> {
   const listOfDates = new Array();
 
   for (let i = 0; i <= numberOfDays; i++) {
-    let tempDate = moment(startDate, "YYYY-MM-DD").add(i, "days");
+    const tempDate = moment(startDate, "YYYY-MM-DD").add(i, "days");
     listOfDates.push(tempDate);
   }
 
