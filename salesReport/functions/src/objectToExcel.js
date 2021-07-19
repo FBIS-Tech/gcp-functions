@@ -21,6 +21,7 @@ async function exportToExcel(data) {
                 { header: "Territory", key: "territory", width: 15 },
                 { header: "Product Code", key: "productCode", width: 10 },
                 { header: "Channel", key: "channel", width: 10 },
+                { header: "Amount", key: "amount", width: 10 },
                 { header: "Date", key: "dateCreated", width: 15 },
             ];
             data.forEach((element, idx) => {

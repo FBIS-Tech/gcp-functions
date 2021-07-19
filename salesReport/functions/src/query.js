@@ -14,7 +14,6 @@ async function salesTransactions(start, end) {
     return new Promise((resolve, reject) => {
         const query = `
                   SELECT 
-                  mvr.id, 
                   mvr.request_msisdn, 
                   mvr.destination_msisdn, 
                   mvr.retail_code, 

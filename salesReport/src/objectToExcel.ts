@@ -14,8 +14,8 @@ export async function exportToExcel(data: [SalesRequest]) {
 
       worksheet.columns = [
         { header: "Retail Code", key: "retailCode", width: 15 },
-        { header: "Origin Phone Number", key: "requestMSISDN", width: 20 },
-        { header: "Destination Phone Number", key: "destinationMSISDN", width: 25 },
+        { header: "Retailer Phone Number", key: "requestMSISDN", width: 20 },
+        { header: "Recipient Phone Number", key: "destinationMSISDN", width: 25 },
         { header: "Dealer Code", key: "dealerCode", width: 10 },
         { header: "Dealer Name", key: "dealerName", width: 15 },
         { header: "Territory", key: "territory", width: 15 },
