@@ -10,7 +10,7 @@ import { SalesRequest } from "./src/types/SalesRequest";
 
 console.log("Hello world!");
 
-const startDate = moment()./* subtract(1, "days"). */startOf('day')
+const startDate = moment().subtract(2, "days").startOf('day')
 const endDate = moment().endOf('day').endOf('day')
 
 const startDateFmt = startDate.format('YYYY-MM-DD HH:mm:ss')

@@ -20,19 +20,18 @@ export async function salesTransactions(start: string, end: string) {
                   mvr.dealer_code, 
                   mvr.amount, 
                   mvr.created_at, 
-                  wt.product_code, 
-                  wt.channel,
+                  mvr.product_code, 
+                  mvr.channel,
                   d.name as dealer_name,
                   pt.territory as dealer_territory
                   FROM mtn_vend_requests as mvr 
-                  LEFT JOIN wallet_transactions as wt ON mvr.transaction_reference = wt.transaction_reference
                   LEFT JOIN dealers as d ON mvr.dealer_code = d.retail_code
                   LEFT JOIN partner_territories as pt ON d.territory = pt.id
                   WHERE (mvr.created_at BETWEEN '${start}' AND '${end}') AND mvr.status = 'SUCCESSFUL'
                   ORDER BY mvr.id ASC
                   LIMIT 0, 10000;`
 
-    console.log(moment().format('HH:mm:ss'))
+    const startT = moment()
     db.query(query, (err, result) => {
       if (err) {
         console.log("Error: ", err);
@@ -57,7 +56,8 @@ export async function salesTransactions(start: string, end: string) {
         return salesRequest;
       });
 
-      console.log(moment().format('HH:mm:ss'))
+      const duration = moment.duration(moment().diff(startT))
+      console.log(`${duration.hours()}:${duration.minutes()}:${duration.seconds()}`)
       resolve(logs);
     });
   });
