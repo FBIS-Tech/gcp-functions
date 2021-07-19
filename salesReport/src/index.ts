@@ -47,7 +47,7 @@ export async function salesTransactionReport(req: Request, res: Response) {
     );
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="sales-report-${startDate}-${endDate}.xlsx`
+      `attachment; filename="sales-report-${startDate.format('YYYY-MM-DD')}-to-${endDate.format('YYYY-MM-DD')}.xlsx`
     );
 
     return workbook.xlsx.write(res).then(() => {

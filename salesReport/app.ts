@@ -10,8 +10,8 @@ import { SalesRequest } from "./src/types/SalesRequest";
 
 console.log("Hello world!");
 
-const startDate = moment().subtract(6, "days").startOf('day')
-const endDate = moment().endOf('day')
+const startDate = moment()./* subtract(1, "days"). */startOf('day')
+const endDate = moment().endOf('day').endOf('day')
 
 const startDateFmt = startDate.format('YYYY-MM-DD HH:mm:ss')
 const endDateFmt = endDate.format('YYYY-MM-DD HH:mm:ss')
@@ -19,12 +19,12 @@ const endDateFmt = endDate.format('YYYY-MM-DD HH:mm:ss')
 salesTransactions(startDateFmt, endDateFmt)
   .then((result) => {
 
-    console.log(result);
+    // console.log(result.lenght());
     const data = result as [SalesRequest];
 
     exportToExcel(data)
       .then((workbook) => {
-        console.log(workbook);
+        // console.log(workbook);
 
         (workbook as excel.Workbook).xlsx
           .writeFile(`sales-report-${startDate.format('YYYY-MM-DD')}-to-${endDate.format('YYYY-MM-DD')}.xlsx`)
