@@ -12,8 +12,3 @@ export interface SalesRequest {
   productCode: string;
   channel: string;
 }
-
-export type TestReturn = (
-  start: string,
-  end: string
-) => Promise<SalesRequest[]>;

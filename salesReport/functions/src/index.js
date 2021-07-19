@@ -15,8 +15,8 @@ async function salesTransactionReport(req, res) {
         .endOf("day")
         .format("YYYY-MM-DD HH:mm:ss");
     try {
-        const listOfDates = splitDates(startDate, endDate);
-        const data = await Promise.all(listOfDates.map((date) => query_1.salesTransactions(date.startOf("day").format(), date.endOf("day").format())));
+        const listOfDates = splitDatesInto(startDate, endDate, 6);
+        const data = await Promise.all(listOfDates.map((date) => query_1.salesTransactions(date.start, date.end)));
         const flattenedData = data.flat();
         console.log("Data: ", flattenedData);
         const dataSorted = flattenedData.sort((a, b) => a.amount - b.amount);
@@ -48,4 +48,22 @@ function splitDates(startDate, endDate) {
         listOfDates.push(tempDate);
     }
     return listOfDates;
+}
+function splitDatesInto(startDate, endDate, noOfHours) {
+    const result = new Array();
+    const formattedStart = moment(startDate, "YYYY-MM-DD");
+    const formattedEnd = moment(endDate, "YYYY-MM-DD");
+    const totalHours = moment
+        .duration(formattedEnd.diff(formattedStart))
+        .asHours();
+    const chunks = totalHours / noOfHours;
+    let start = moment(startDate, "YYYY-MM-DD");
+    for (let i = 1; i <= chunks; i++) {
+        const end = moment(startDate, "YYYY-MM-DD")
+            .add(noOfHours * i, "hours")
+            .subtract(1, "milliseconds");
+        result.push({ start: start.format(), end: end.format() });
+        start = start.add(noOfHours, "hours");
+    }
+    return result;
 }

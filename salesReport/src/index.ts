@@ -3,6 +3,8 @@ import * as moment from "moment";
 import * as excel from "exceljs";
 import { salesTransactions } from "./query";
 import { exportToExcel } from "./objectToExcel";
+import { ChunkedDate } from "./types/ChunkedDate";
+import e = require("express");
 
 export async function salesTransactionReport(req: Request, res: Response) {
   console.log(req);
@@ -20,15 +22,10 @@ export async function salesTransactionReport(req: Request, res: Response) {
     .format("YYYY-MM-DD HH:mm:ss");
 
   try {
-    const listOfDates = splitDates(startDate, endDate);
+    const listOfDates = splitDatesInto(startDate, endDate, 6);
 
     const data = await Promise.all(
-      listOfDates.map((date) =>
-        salesTransactions(
-          date.startOf("day").format(),
-          date.endOf("day").format()
-        )
-      )
+      listOfDates.map((date) => salesTransactions(date.start, date.end))
     );
 
     const flattenedData = data.flat();
@@ -57,6 +54,7 @@ export async function salesTransactionReport(req: Request, res: Response) {
 }
 
 /**
+ * This function splits the report duration into days
  *
  * @param startDate Represents the start date for the report in "YYYY-MM-DD"
  * @param endDate Represents the end date for the report in "YYYY-MM-DD"
@@ -81,6 +79,43 @@ function splitDates(startDate: string, endDate: string): Array<moment.Moment> {
   }
 
   return listOfDates;
+}
+
+/**
+ * This function splits the report duration into @param noOfHours hours
+ *
+ * @param startDate Represents the start date for the report in "YYYY-MM-DD"
+ * @param endDate Represents the end date for the report in "YYYY-MM-DD"
+ * @param noOfHours Represents the no of hours we want to split the report duration into
+ */
+
+function splitDatesInto(
+  startDate: string,
+  endDate: string,
+  noOfHours: number
+): Array<ChunkedDate> {
+  const result = new Array<ChunkedDate>();
+
+  const formattedStart = moment(startDate, "YYYY-MM-DD");
+  const formattedEnd = moment(endDate, "YYYY-MM-DD");
+
+  const totalHours = moment
+    .duration(formattedEnd.diff(formattedStart))
+    .asHours();
+
+  const chunks = totalHours / noOfHours;
+
+  let start = moment(startDate, "YYYY-MM-DD");
+
+  for (let i = 1; i <= chunks; i++) {
+    const end = moment(startDate, "YYYY-MM-DD")
+      .add(noOfHours * i, "hours")
+      .subtract(1, "milliseconds");
+    result.push({ start: start.format(), end: end.format() });
+    start = start.add(noOfHours, "hours");
+  }
+
+  return result;
 }
 
 // https://europe-west3-asterisk-ivr-293907.cloudfunctions.net/salesTransactionReport?start=2021-07-01&end=2021-07-02
