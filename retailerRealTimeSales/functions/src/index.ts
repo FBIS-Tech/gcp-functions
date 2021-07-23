@@ -22,7 +22,10 @@ export const retailerSalesRealTimeTracker = functions
         const previousData = change.before.data()
 
         if (currentData) {
-            const subDealerCode = currentData.subDealerCode
+            const subDealerCode = previousData ?
+                previousData.subDealerCode :
+                currentData.subDealerCode
+
             let amount = currentData.amount
 
             if (previousData) {
@@ -35,7 +38,7 @@ export const retailerSalesRealTimeTracker = functions
 
             const dealerDailySales = await dealerDailySalesRef.get()
 
-            if ((dealerDailySales).exists) {
+            if (dealerDailySales.exists) {
                 const udpateResponse = await dealerDailySalesRef.update({
                     amount: admin.firestore.FieldValue.increment(amount),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()

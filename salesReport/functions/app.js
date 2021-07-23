@@ -6,7 +6,7 @@ const query_1 = require("./src/query");
 const objectToExcel_1 = require("./src/objectToExcel");
 const moment = require("moment");
 console.log("Hello world!");
-const startDate = moment().startOf('day');
+const startDate = moment().subtract(2, "days").startOf('day');
 const endDate = moment().endOf('day').endOf('day');
 const startDateFmt = startDate.format('YYYY-MM-DD HH:mm:ss');
 const endDateFmt = endDate.format('YYYY-MM-DD HH:mm:ss');
