@@ -6,8 +6,8 @@ const query_1 = require("./src/query");
 const objectToExcel_1 = require("./src/objectToExcel");
 const moment = require("moment");
 console.log("Hello world!");
-const startDate = moment().subtract(2, "days").startOf('day');
-const endDate = moment().endOf('day').endOf('day');
+const startDate = moment("2021-07-01");
+const endDate = moment("2021-07-31");
 const startDateFmt = startDate.format('YYYY-MM-DD HH:mm:ss');
 const endDateFmt = endDate.format('YYYY-MM-DD HH:mm:ss');
 query_1.salesTransactions(startDateFmt, endDateFmt)

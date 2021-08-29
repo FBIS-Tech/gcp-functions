@@ -2,6 +2,7 @@ import * as  moment from "moment";
 import { RowDataPacket } from "mysql2";
 import { db } from "./db";
 import { SalesRequest } from "./types/SalesRequest";
+
 function objectMap(object: any, mapFn: any) {
   return Object.keys(object).reduce(function (result: any, key: any) {
     result[key] = mapFn(object[key]);
@@ -28,8 +29,7 @@ export async function salesTransactions(start: string, end: string) {
                   LEFT JOIN dealers as d ON mvr.dealer_code = d.retail_code
                   LEFT JOIN partner_territories as pt ON d.territory = pt.id
                   WHERE (mvr.created_at BETWEEN '${start}' AND '${end}') AND mvr.status = 'SUCCESSFUL'
-                  ORDER BY mvr.id ASC
-                  LIMIT 0, 10000;`
+                  ORDER BY mvr.id ASC`
 
     const startT = moment()
     db.query(query, (err, result) => {

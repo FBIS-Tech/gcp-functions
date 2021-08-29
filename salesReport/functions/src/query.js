@@ -28,8 +28,7 @@ async function salesTransactions(start, end) {
                   LEFT JOIN dealers as d ON mvr.dealer_code = d.retail_code
                   LEFT JOIN partner_territories as pt ON d.territory = pt.id
                   WHERE (mvr.created_at BETWEEN '${start}' AND '${end}') AND mvr.status = 'SUCCESSFUL'
-                  ORDER BY mvr.id ASC
-                  LIMIT 0, 10000;`;
+                  ORDER BY mvr.id ASC`;
         const startT = moment();
         db_1.db.query(query, (err, result) => {
             if (err) {
