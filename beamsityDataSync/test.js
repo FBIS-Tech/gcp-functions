@@ -1,5 +1,5 @@
-const constants = require("./constants")
-const { dataSync } = require('./index')
+const constants = require("./constants");
+const { dataSync } = require("./index");
 
 const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -116,12 +116,11 @@ const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/e
         </ns1:syncOrderRelation>
     </soapenv:Body>
 </soapenv:Envelope>
-`
-
+`;
 
 const main = async () => {
-    await dataSync(text)
-}
-main()
+  await dataSync(text);
+};
+main();
 
-// gcloud functions deploy pubsubMessage --region europe-west3 --trigger-topic billing-data-sync --runtime nodejs14
+// gcloud functions deploy beamsityDataSync --region europe-west3 --trigger-topic billing-data-sync --runtime nodejs14
