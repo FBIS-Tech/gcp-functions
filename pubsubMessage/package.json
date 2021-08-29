@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/pubsub": "^2.8.0",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "escape-html": "^1.0.3",
     "moment": "^2.29.1",

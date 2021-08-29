@@ -3,16 +3,13 @@
 const moment = require('moment')
 const parser = require('xml2json');
 const {
-    getUser,
-    getRoles,
-    addUser,
-    addUserRole,
-    addUserSubscription,
-    deleteUserSubscription,
-    updateUserSubscription,
-    blockUserSubscription,
-    unblockUserSubscription,
-    getSubscriptions
+    getStudent,
+    addStudent,
+    addStudentToSubscription,
+    updateStudentSubscription,
+    // blockUserSubscription,
+    // unblockUserSubscription,
+    deleteStudentSubscription
 } = require('./queries/queries')
 
 const {
@@ -70,53 +67,34 @@ const dataSync = async (content) => {
 
     console.log(syncOrder.productID, traceUniqueId, transactionId, orderKey, rentSuccess, cycleEndTime, startTime)
 
+    const productId = syncOrder.productID;
 
-
+    let student;
     // //get the first user matching msisdn
-    let users = await getUser(msisdn)
-    let user = users[0]
-    console.log("user", user)
+    let data = await getStudent(msisdn)
+    student = data.data;
+    console.log("Student", student)
 
-    if (!user) {
-        //user does not exist, create user and add student role
-        let [users, roles] = await Promise.all([addUser(msisdn), getRoles('student')])
-        user = users[0]
-        let studentRole = roles[0]
-        console.log("User: ", user)
-        console.log("Role: ", studentRole)
-        await addUserRole(user.id, studentRole.id)
+    if (!student) {
+        //user does not exist, create user
+        data = await addStudent(msisdn);
+        student = data.data
+        console.log("Student: ", student)
     }
-
-    //find the given subscription and rentSuccess internslly
-    let subscriptions = await getSubscriptions(syncOrder.productID)
-    let subscription = subscriptions[0]
-    console.log("Subscription: ", subscription)
-
 
     //Use: syncOrder.updateType and 
     switch (syncOrder.updateType) {
         case DATASYNC_TYPE_ADD:
             //create a new subscription
             let newValues = {
-                userId: user.id,
-                subscriptionId: subscription.id,
-                effectiveTime: moment(syncOrder.effectiveTime, DATE_FORMAT),
-                expiryTime: moment(syncOrder.expiryTime, DATE_FORMAT),
-                traceUniqueId: traceUniqueId,
-                transactionId: transactionId,
-                orderKey: orderKey,
-                cycleEndTime: moment(cycleEndTime, DATE_FORMAT),
-                startTime: moment(startTime, DATE_FORMAT),
-                updateDesc: syncOrder.updateDesc,
-                updateReason: updateReason,
-                accessCode: accessCode,
-                active: true,
-                extension: subscription.short_code
+                userId: student.id,
+                productId,
+                duration: moment(syncOrder.effectiveTime, DATE_FORMAT)
             }
 
             console.log(newValues)
-            let userSub = await addUserSubscription(newValues)
-            console.log("User sub addedd successfully: ", userSub)
+            let studentSub = await addStudentToSubscription(newValues)
+            console.log("Student sub addedd successfully: ", studentSub)
             break;
         case DATASYNC_TYPE_UPDATE:
             //update existing subscriptin
@@ -132,28 +110,28 @@ const dataSync = async (content) => {
                 updateReason,
             }
 
-            let userUpdateSub = await updateUserSubscription(subscription.id, updateValues);
-            console.log(userUpdateSub);
-            console.log(`User sub with id ${subscription.id} updated successfully: `);
+            let studentUpdateSub = await updateStudentSubscription(subscription.id, updateValues);
+            console.log(studentUpdateSub);
+            console.log(`Student sub with product id ${productId} updated successfully: `);
             break;
         case DATASYNC_TYPE_DELETE:
             //Delete existing subscription
-            let userDeleteSub = await deleteUserSubscription(subscription.id);
-            console.log(userDeleteSub);
-            console.log(`User sub with id ${subscription.id} deleted successfully: `);
+            let studentDeleteSub = await deleteStudentSubscription(productId, $);
+            console.log(studentDeleteSub);
+            console.log(`Student sub with product id ${productId} deleted successfully: `);
             break;
-        case DATASYNC_TYPE_BLOCK:
-            //Block existing subscription
-            let userBlockSub = await blockUserSubscription(subscription.id);
-            console.log(userBlockSub);
-            console.log(`User sub with id ${subscription.id} blocked successfully: `);
-            break;
-        case DATASYNC_TYPE_UNBLOCK:
-            //Unblock existing subcripotion
-            let userUnblockSub = await unblockUserSubscription(subscription.id);
-            console.log(userUnblockSub);
-            console.log(`User sub with id ${subscription.id} unblocked successfully: `);
-            break;
+        // case DATASYNC_TYPE_BLOCK:
+        //     //Block existing subscription
+        //     let userBlockSub = await blockUserSubscription(subscription.id);
+        //     console.log(userBlockSub);
+        //     console.log(`User sub with id ${subscription.id} blocked successfully: `);
+        //     break;
+        // case DATASYNC_TYPE_UNBLOCK:
+        //     //Unblock existing subcripotion
+        //     let userUnblockSub = await unblockUserSubscription(subscription.id);
+        //     console.log(userUnblockSub);
+        //     console.log(`User sub with id ${subscription.id} unblocked successfully: `);
+        //     break;
     }
 
 }
