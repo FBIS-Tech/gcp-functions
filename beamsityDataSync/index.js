@@ -52,18 +52,15 @@ const dataSync = async (content) => {
   console.log(syncOrder, extensionInfo, msisdn);
 
   // let subscriptionKeyword = extensionInfo.find(e => e.key === 'keyword').value
-  let subscriptionKeyword = extensionInfo.find((e) => e.key === "keyword")
-    .value;
-  let traceUniqueId = extensionInfo.find((e) => e.key === "TraceUniqueID")
-    .value;
-  let transactionId = extensionInfo.find((e) => e.key === "transactionID")
-    .value;
-  let orderKey = extensionInfo.find((e) => e.key === "orderKey").value;
-  let rentSuccess = extensionInfo.find((e) => e.key === "rentSuccess").value;
-  let cycleEndTime = extensionInfo.find((e) => e.key === "cycleEndTime").value;
-  let startTime = extensionInfo.find((e) => e.key === "Starttime").value;
-  let updateReason = extensionInfo.find((e) => e.key === "Starttime").value;
-  let accessCode = extensionInfo.find((e) => e.key === "accessCode").value;
+  let subscriptionKeyword = extensionInfo.find((e) => e.key === "keyword")?.value;
+  let traceUniqueId = extensionInfo.find((e) => e.key === "TraceUniqueID")?.value;
+  let transactionId = extensionInfo.find((e) => e.key === "transactionID")?.value;
+  let orderKey = extensionInfo.find((e) => e.key === "orderKey")?.value;
+  let rentSuccess = extensionInfo.find((e) => e.key === "rentSuccess")?.value;
+  let cycleEndTime = extensionInfo.find((e) => e.key === "cycleEndTime")?.value;
+  let startTime = extensionInfo.find((e) => e.key === "Starttime")?.value;
+  let updateReason = extensionInfo.find((e) => e.key === "Starttime")?.value;
+  let accessCode = extensionInfo.find((e) => e.key === "accessCode")?.value;
 
   console.log(
     syncOrder.productID,
@@ -97,8 +94,8 @@ const dataSync = async (content) => {
     case DATASYNC_TYPE_ADD:
       //create a new subscription
       let newValues = {
-        userId: student.id,
-        productId,
+        studentId: student.id,
+        subscriptionKeyword,
         duration: moment(syncOrder.effectiveTime, DATE_FORMAT),
       };
 
@@ -121,20 +118,21 @@ const dataSync = async (content) => {
       };
 
       let studentUpdateSub = await updateStudentSubscription(
-        subscription.id,
+        subscriptionKeyword,
+        student.id,
         updateValues
       );
       console.log(studentUpdateSub);
       console.log(
-        `Student sub with product id ${productId} updated successfully: `
+        `Student sub with subscription keyword ${subscriptionKeyword} updated successfully: `
       );
       break;
     case DATASYNC_TYPE_DELETE:
       //Delete existing subscription
-      let studentDeleteSub = await deleteStudentSubscription(productId, $);
+      let studentDeleteSub = await deleteStudentSubscription(subscriptionKeyword, student.id);
       console.log(studentDeleteSub);
       console.log(
-        `Student sub with product id ${productId} deleted successfully: `
+        `Student sub with subscription keyword ${subscriptionKeyword} deleted successfully: `
       );
       break;
     // case DATASYNC_TYPE_BLOCK:

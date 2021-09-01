@@ -5,7 +5,7 @@ dotenv.config();
 
 const getStudent = async (msisdn) => {
     try {
-        const response = await axios.get(
+        const { data } = await axios.get(
             `${process.env.MAIN_APP_BASE_URL}/api/v1/students/${msisdn}`,
             {
                 headers: {
@@ -14,8 +14,7 @@ const getStudent = async (msisdn) => {
             }
         );
 
-        console.log(`Response: ${response}`);
-        return response.data;
+        return data;
 
     } catch(error) {
         console.error(error.message);
@@ -41,9 +40,9 @@ const addStudent = async (msisdn) => {
 
 const addStudentToSubscription = async (values) => {
     try {
-        const { productId, studentId, duration } = values;
+        const { subscriptionKeyword, studentId, duration } = values;
         const { data } = await axios.post(
-            `${process.env.MAIN_APP_BASE_URL}/api/v1/students/subscriptions/${productId}/subscribe`,
+            `${process.env.MAIN_APP_BASE_URL}/api/v1/students/subscriptions/${subscriptionKeyword}/subscribe`,
             { studentId, duration },
             {
                 headers: {
@@ -57,10 +56,10 @@ const addStudentToSubscription = async (values) => {
     }
 }
 
-const updateStudentSubscription = async (productId, studentId, values) => {
+const updateStudentSubscription = async (subscriptionKeyword, studentId, values) => {
     try {
         const { data } = await axios.put(
-            `${process.env.MAIN_APP_BASE_URL}/api/v1/students/subscriptions/${productId}/${studentId}`,
+            `${process.env.MAIN_APP_BASE_URL}/api/v1/students/subscriptions/${subscriptionKeyword}/${studentId}`,
             { values },
             {
                 headers: {
@@ -94,10 +93,10 @@ const updateStudentSubscription = async (productId, studentId, values) => {
 //     });
 // }
 
-const deleteStudentSubscription = async (productId, $studendId) => {
+const deleteStudentSubscription = async (subscriptionKeyword, studentId) => {
     try {
         const { data } = await axios.delete(
-            `${process.env.MAIN_APP_BASE_URL}/api/v1/students/subscriptions/${productId}/${studentId}`,
+            `${process.env.MAIN_APP_BASE_URL}/api/v1/students/subscriptions/${subscriptionKeyword}/${studentId}`,
             {
                 headers: {
                     'X-Client-Key': process.env.X_CLIENT_KEY
