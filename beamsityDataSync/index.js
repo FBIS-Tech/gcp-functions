@@ -80,12 +80,14 @@ const dataSync = async (content) => {
   let student;
   // //get the first user matching msisdn
   let data = await getStudent(msisdn);
+  console.log(`Student Data: ${data}`);
   student = data.data;
   console.log("Student", student);
 
   if (!student) {
     //user does not exist, create user
     data = await addStudent(msisdn);
+    console.log(`Student Data: ${data}`);
     student = data.data;
     console.log("Student: ", student);
   }

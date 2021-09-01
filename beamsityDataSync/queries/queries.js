@@ -5,7 +5,7 @@ dotenv.config();
 
 const getStudent = async (msisdn) => {
     try {
-        const { data } = await axios.get(
+        const response = await axios.get(
             `${process.env.MAIN_APP_BASE_URL}/api/v1/students/${msisdn}`,
             {
                 headers: {
@@ -14,7 +14,8 @@ const getStudent = async (msisdn) => {
             }
         );
 
-        return data;
+        console.log(`Response: ${response}`);
+        return response.data;
 
     } catch(error) {
         console.error(error.message);
