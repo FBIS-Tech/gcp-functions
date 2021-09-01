@@ -14,6 +14,7 @@ const getStudent = async (msisdn) => {
             }
         );
 
+        console.log(data);
         return data;
 
     } catch(error) {
@@ -33,6 +34,9 @@ const addStudent = async (msisdn) => {
             }
         );
 
+        console.log(data);
+        return data;
+
     } catch(error) {
         console.error(error.message);
     }
@@ -51,6 +55,9 @@ const addStudentToSubscription = async (values) => {
             }
         );
 
+        console.log(data);
+        return data;
+
     } catch(error) {
         console.error(error.message);
     }
@@ -67,6 +74,9 @@ const updateStudentSubscription = async (subscriptionKeyword, studentId, values)
                 }
             }
         );
+
+        console.log(data);
+        return data;
 
     } catch(error) {
         console.error(error.message);
@@ -103,6 +113,9 @@ const deleteStudentSubscription = async (subscriptionKeyword, studentId) => {
                 }
             }
         );
+
+        console.log(data);
+        return data;
 
     } catch(error) {
         console.error(error.message);

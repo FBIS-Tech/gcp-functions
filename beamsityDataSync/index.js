@@ -77,16 +77,16 @@ const dataSync = async (content) => {
   let student;
   // //get the first user matching msisdn
   let data = await getStudent(msisdn);
-  console.log(`Student Data: ${data}`);
-  student = data.data;
-  console.log("Student", student);
+  console.log("Old Student Data: ", data);
+  student = data?.data;
+  console.log("Old Student", student);
 
   if (!student) {
     //user does not exist, create user
     data = await addStudent(msisdn);
-    console.log(`Student Data: ${data}`);
-    student = data.data;
-    console.log("Student: ", student);
+    console.log("New Student Data: ", data);
+    student = data?.data;
+    console.log("New Student: ", student);
   }
 
   //Use: syncOrder.updateType and
@@ -101,7 +101,7 @@ const dataSync = async (content) => {
 
       console.log(newValues);
       let studentSub = await addStudentToSubscription(newValues);
-      console.log("Student sub addedd successfully: ", studentSub);
+      console.log("Student sub added successfully: ", studentSub);
       break;
     case DATASYNC_TYPE_UPDATE:
       //update existing subscriptin
@@ -129,7 +129,7 @@ const dataSync = async (content) => {
       break;
     case DATASYNC_TYPE_DELETE:
       //Delete existing subscription
-      let studentDeleteSub = await deleteStudentSubscription(subscriptionKeyword, student.id);
+      let studentDeleteSub = await deleteStudentSubscription(subscriptionKeyword, student?.id);
       console.log(studentDeleteSub);
       console.log(
         `Student sub with subscription keyword ${subscriptionKeyword} deleted successfully: `
