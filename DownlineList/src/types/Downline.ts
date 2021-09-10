@@ -1,4 +1,4 @@
-export interface Retailer {
+export interface Downline {
     name: string,
     retailCode: string,
     msisdn: number,

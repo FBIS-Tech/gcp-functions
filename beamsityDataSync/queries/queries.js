@@ -42,12 +42,11 @@ const addStudent = async (msisdn) => {
     }
 }
 
-const addStudentToSubscription = async (values) => {
+const addStudentToSubscription = async (subscriptionKeyword, values) => {
     try {
-        const { subscriptionKeyword, studentId, duration } = values;
         const { data } = await axios.post(
             `${process.env.MAIN_APP_BASE_URL}/api/v1/students/subscriptions/${subscriptionKeyword}/subscribe`,
-            { studentId, duration },
+            values,
             {
                 headers: {
                     'X-Client-Key': process.env.X_CLIENT_KEY

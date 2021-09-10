@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import * as moment from 'moment'
 import * as excel from 'exceljs'
-import { retailersStatus } from './query'
+import { downlineStatus } from './query'
 import { exportToExcel } from './objectToExcel'
 import { SumVendRequest } from './types/VendRequest'
 
 
-export async function activeRetailersStatus(req: Request, res: Response) {
+export async function activeDownlinesStatus(req: Request, res: Response) {
     console.log("Start: ", req.query.start)
     console.log("End: ", req.query.end)
 
@@ -17,7 +17,7 @@ export async function activeRetailersStatus(req: Request, res: Response) {
     const endDate = (end ? moment(end) : moment()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
     try {
-        const data = await retailersStatus(startDate, endDate) as [SumVendRequest]
+        const data = await downlineStatus(startDate, endDate) as [SumVendRequest]
         console.log("Data Count: ", data.length)
         const dataSorted = data.sort((a, b) => {
             if (a.amount < b.amount) {

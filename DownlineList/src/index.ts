@@ -1,15 +1,19 @@
 import { Request, Response } from 'express'
 import * as excel from 'exceljs'
-import { retailerList } from './query'
+import { retailerList, subDealerList } from './query'
 import { exportToExcel } from './objectToExcel'
-import { Retailer } from './types/Retailer'
+import { Downline } from './types/Downline'
 
 
 export async function retailersRecord(req: Request, res: Response) {
     console.log(req)
 
     try {
-        const data = await retailerList() as [Retailer]
+        const retailersListPromise: Promise<Downline[]> = retailerList();
+        const subDealersListPromise: Promise<Downline[]> = subDealerList();
+
+        const [retailers, subDealers] = await Promise.all([retailersListPromise, subDealersListPromise])
+        const data = [...retailers, ...subDealers]
         console.log("Data: ", data)
         const workbook = await exportToExcel(data) as excel.Workbook
 

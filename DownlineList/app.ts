@@ -5,13 +5,13 @@ import * as excel from 'exceljs'
 import { retailerList } from './src/query'
 import { exportToExcel } from './src/objectToExcel'
 
-import { Retailer } from "./src/types/Retailer";
+import { Downline } from "./src/types/Downline";
 
 retailerList()
     .then(result => {
         console.log(result)
 
-        const data = result as [Retailer]
+        const data = result as [Downline]
 
         exportToExcel(data).then((workbook) => {
             console.log(workbook);

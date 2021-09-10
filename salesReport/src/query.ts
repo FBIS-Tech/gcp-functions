@@ -3,13 +3,6 @@ import { RowDataPacket } from "mysql2";
 import { db } from "./db";
 import { SalesRequest } from "./types/SalesRequest";
 
-function objectMap(object: any, mapFn: any) {
-  return Object.keys(object).reduce(function (result: any, key: any) {
-    result[key] = mapFn(object[key]);
-    return result;
-  }, {});
-}
-
 export async function salesTransactions(start: string, end: string) {
   console.log(start, end);
   return new Promise((resolve, reject) => {

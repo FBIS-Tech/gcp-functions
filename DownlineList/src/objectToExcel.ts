@@ -1,8 +1,8 @@
 import * as excel from 'exceljs'
-import { Retailer } from './types/Retailer';
+import { Downline } from './types/Downline';
 
 
-export async function exportToExcel(data: [Retailer]) {
+export async function exportToExcel(data: Downline[]) {
     return new Promise((resolve, reject) => {
         try {
             const workbook = new excel.Workbook();

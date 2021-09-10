@@ -77,3 +77,45 @@ export const retailerSalesRealTimeTracker = functions
             }
         }
     })
+
+export const subDealerSalesRealTimeTracker = functions
+    .region("europe-west3")
+    .firestore
+    .document("sales/sub-dealers/{retailCode}/{docId}")
+    .onWrite(async (change, context) => {
+        console.log("Change: ", change)
+
+        const retailCode = context.params.retailCode
+        const dealerCode = retailCode.substr(0, 2)
+
+        const currentData = change.after.data()
+        const previousData = change.before.data()
+
+        if (currentData) {
+            let amount = currentData.amount
+
+            if (previousData) {
+                amount = amount - previousData.amount
+            }
+
+            // update dealer sales
+            const day = moment().format("YYYYMMDD").toString()
+            const dealerDailySalesRef = db.doc(`sales/dealers/${dealerCode}/${day}`)
+
+            const dealerDailySales = await dealerDailySalesRef.get()
+
+            if (dealerDailySales.exists) {
+                const udpateResponse = await dealerDailySalesRef.update({
+                    amount: admin.firestore.FieldValue.increment(amount),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                })
+                console.log(`Dealer Sales Updated: ${udpateResponse}`)
+            } else {
+                const createResponse = await dealerDailySalesRef.set({
+                    amount: amount,
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                })
+                console.log(`Dealer Sales Create: ${createResponse}`)
+            }
+        }
+    })
