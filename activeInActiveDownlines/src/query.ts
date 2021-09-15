@@ -25,7 +25,7 @@ function mapVendRequests(row: RowDataPacket) {
 }
 
 
-export async function downlineStatus(start: string, end: string) {
+export async function retailersStatus(start: string, end: string) {
     console.log("Using Date: ", start, end);
     
     return new Promise((resolve, reject) => {
