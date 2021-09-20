@@ -2,3 +2,4 @@
 generateUUIDs.js
 /node_modules
 *.xlsx
+yarn.lock
