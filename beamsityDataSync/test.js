@@ -118,8 +118,41 @@ const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/e
 </soapenv:Envelope>
 `;
 
+const DATE_FORMAT_REGEX = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+
+const convertTimeStringToDate = (dateString) => {
+  const dateArray = DATE_FORMAT_REGEX.exec(dateString);
+
+  // If string isn't properly formed
+  if (!dateArray) throw new Error(`Invalid date string: ${dateString}`);
+
+  // Destructure component of string match
+  const [_, year, month, day, hour, minute, second] = dateArray;
+  console.log(year, month, day, hour, minute, second);
+
+  // Add 1 to hour to offset conversion to GMT by ISOString
+  const convertedDate = new Date(
+    `${year}-${month}-${day}T${hour}:${minute}:${second}`
+  );
+
+  try {
+    convertedDate.toString();
+  } catch (e) {
+    console.log(e);
+    throw new Error(`Invalid date: ${convertedDate}`);
+  }
+
+  var tzoffset = new Date().getTimezoneOffset() * 60000;
+  return new Date(convertedDate - tzoffset).toISOString();
+};
+
 const main = async () => {
-  await dataSync(text);
+  //   await dataSync(text);
+  try {
+    console.log(convertTimeStringToDate("20210915085557"));
+  } catch (e) {
+    console.log(e);
+  }
 };
 main();
 
