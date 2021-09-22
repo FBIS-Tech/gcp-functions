@@ -26,19 +26,27 @@ const convertTimeStringToDate = (dateString) => {
   const dateArray = DATE_FORMAT_REGEX.exec(dateString);
 
   // If string isn't properly formed
-  if(!dateArray) throw new Error(`Invalid date string: ${dateString}`);
+  if (!dateArray) throw new Error(`Invalid date string: ${dateString}`);
 
   // Destructure component of string match
   const [_, year, month, day, hour, minute, second] = dateArray;
+  console.log(year, month, day, hour, minute, second);
 
   // Add 1 to hour to offset conversion to GMT by ISOString
-  const convertedDate = new Date(`${year}-${month}-${day}T${Number(hour) + 1}:${minute}:${second}`);
+  const convertedDate = new Date(
+    `${year}-${month}-${day}T${hour}:${minute}:${second}`
+  );
 
-  if(convertedDate.toString() === "Invalid Date")
-    throw new Error(`Invalid date string: ${dateString}`);
-  
-  return convertedDate.toISOString();
-}
+  try {
+    convertedDate.toString();
+  } catch (e) {
+    console.log(e);
+    throw new Error(`Invalid date: ${convertedDate}`);
+  }
+
+  var tzoffset = new Date().getTimezoneOffset() * 60000;
+  return new Date(convertedDate - tzoffset).toISOString();
+};
 
 /**
  * Triggered from a message on a Cloud Pub/Sub topic.

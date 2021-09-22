@@ -12,8 +12,7 @@ function objectMap(object: any, mapFn: any) {
 
 function mapVendRequests(row: RowDataPacket) {
     const vendRequest: VendRequest = {
-        retailerName: row.retailerName,
-        subDealerName: row.subDealerName,
+        name: row.name,
         requestMSISDN: row.request_msisdn,
         retailCode: row.retail_code,
         dealerCode: row.dealer_code,
@@ -24,59 +23,94 @@ function mapVendRequests(row: RowDataPacket) {
     return vendRequest
 }
 
-
-export async function retailersStatus(start: string, end: string) {
-    console.log("Using Date: ", start, end);
-    
+const dbQueryHandler = (query: string) => {
     return new Promise((resolve, reject) => {
-        const query = `
+        db.query(query, (err, result) => {
+            if (err) {
+                console.log(err)
+                reject(err);
+                return;
+            }
+
+            resolve(result);
+        });
+    });
+}
+
+export const processDownlines = async (start: string, end: string): Promise<SumVendRequest[]> => {
+    const retailersPromise = retailersStatus(start, end);
+    const subDealersPromise = subDealersStatus(start, end);
+
+    const [retailersResolved, subDealersResolved] = await Promise.all([retailersPromise, subDealersPromise]);
+    
+    const retailerRows = <RowDataPacket[]>retailersResolved;
+    const subDealersRows = <RowDataPacket[]>subDealersResolved;
+
+    const downlines = [...retailerRows, ...subDealersRows]
+
+    const groupedRequests = downlines
+        .map(mapVendRequests)
+        .reduce(Reducer.groupBy('retailCode'), Reducer.Map())
+        .toObject();
+
+    const newObject = objectMap(groupedRequests, (values: [VendRequest]) => {
+        const total = values
+            .map(v => v.amount)
+            .reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue));
+
+        const sum: SumVendRequest = {
+            name: values[0].name,
+            requestMSISDN: values[0].requestMSISDN,
+            retailCode: values[0].retailCode,
+            dealerCode: values[0].dealerCode,
+            amount: Number(total),
+        }
+        
+        return sum
+    });
+
+    const downlineList = Object.keys(newObject).map(key => newObject[key])
+    console.log("Downline List Count: ", downlineList.length)
+
+    return downlineList;
+}
+
+function retailersStatus(start: string, end: string) {
+    console.log("Using Date: ", start, end);
+
+    const query = `
         SELECT 
         mvr.id,
         mvr.request_msisdn,
         mvr.retail_code,
         mvr.dealer_code,
         mvr.amount,
-        r.name AS retailerName
-        s.name AS subdealerName
+        r.name
         FROM mtn_vend_requests as mvr 
-        INNER JOIN retailers as r ON r.retail_code = mvr.retail_code
-        INNER JOIN sub_dealers as s ON s.retail_code = mvr.retail_code
+        JOIN retailers as r ON r.retail_code = mvr.retail_code
         WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`
 
-        console.log("Query: ", query)
+    console.log("Query: ", query)
 
-        db.query(query, (err, result) => {
-            if (err) {
-                console.log("Error: ", err)
-                reject(err)
-            }
+    return dbQueryHandler(query);
+}
 
-            const rows = <RowDataPacket[]>result;
+function subDealersStatus(start: string, end: string) {
+    console.log("Using Date: ", start, end);
 
-            const groupedRequests = rows
-                .map(mapVendRequests)
-                .reduce(Reducer.groupBy('retailCode'), Reducer.Map())
-                .toObject();
+    const query = `
+        SELECT 
+        mvr.id,
+        mvr.request_msisdn,
+        mvr.retail_code,
+        mvr.dealer_code,
+        mvr.amount,
+        s.name
+        FROM mtn_vend_requests as mvr 
+        JOIN sub_dealers as s ON s.retail_code = mvr.retail_code
+        WHERE (mvr.created_at BETWEEN '${start}' AND '${end}')`
 
-            const newObject = objectMap(groupedRequests, (values: [VendRequest]) => {
-                const total = values
-                    .map(v => v.amount)
-                    .reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue));
+    console.log("Query: ", query)
 
-                const sum: SumVendRequest = {
-                    name: values[0].retailerName ?? values[0].subDealerName,
-                    requestMSISDN: values[0].requestMSISDN,
-                    retailCode: values[0].retailCode,
-                    dealerCode: values[0].dealerCode,
-                    amount: Number(total),
-                }
-                
-                return sum
-            })
-
-            const downlineList = Object.keys(newObject).map(key => newObject[key])
-            console.log("Downline List Count: ", downlineList.length)
-            resolve(downlineList)
-        })
-    })
+    return dbQueryHandler(query);
 }

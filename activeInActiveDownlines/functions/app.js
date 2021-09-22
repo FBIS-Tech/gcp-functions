@@ -6,10 +6,9 @@ const query_1 = require("./src/query");
 const objectToExcel_1 = require("./src/objectToExcel");
 const moment = require("moment");
 console.log("Hello world!");
-const now = moment();
-const startDate = now.subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss');
-const endDate = now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss');
-query_1.retailersStatus(startDate, endDate)
+const startDate = moment().subtract(6, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss');
+const endDate = moment().endOf('day').format('YYYY-MM-DD HH:mm:ss');
+query_1.processDownlines(startDate, endDate)
     .then(result => {
     console.log(result);
     const data = result;

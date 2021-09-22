@@ -9,10 +9,10 @@ async function activeRetailersStatus(req, res) {
     console.log("End: ", req.query.end);
     const start = req.query.start;
     const end = req.query.end;
-    const startDate = (start ? moment(start) : moment().subtract(7, 'days')).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    const startDate = (start ? moment(start) : moment().subtract(6, 'days')).startOf('day').format('YYYY-MM-DD HH:mm:ss');
     const endDate = (end ? moment(end) : moment()).endOf('day').format('YYYY-MM-DD HH:mm:ss');
     try {
-        const data = await query_1.retailersStatus(startDate, endDate);
+        const data = await query_1.processDownlines(startDate, endDate);
         console.log("Data Count: ", data.length);
         const dataSorted = data.sort((a, b) => {
             if (a.amount < b.amount) {

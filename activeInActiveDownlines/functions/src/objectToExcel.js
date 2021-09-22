@@ -20,7 +20,6 @@ async function exportToExcel(data) {
                 { header: "Amount", key: "amount", width: 30 },
             ];
             data.forEach((element, idx) => {
-                console.log("Adding Row: ", element);
                 worksheet.insertRow(idx + 2, {
                     retailCode: element.retailCode,
                     dealerCode: element.dealerCode,
