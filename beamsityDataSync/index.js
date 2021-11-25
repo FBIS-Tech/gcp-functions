@@ -79,7 +79,7 @@ const dataSync = async (content) => {
   let traceUniqueId = extensionInfo.find((e) => e.key === "TraceUniqueID")?.value;
   let transactionId = extensionInfo.find((e) => e.key === "transactionID")?.value;
   // let rentSuccess = extensionInfo.find((e) => e.key === "rentSuccess")?.value;
-  let status = extensionInfo.find((e) => e.key === "status")?.value;
+  // let status = extensionInfo.find((e) => e.key === "status")?.value;
   // let accessCode = extensionInfo.find((e) => e.key === "accessCode")?.value;
 
   // Extract and convert time values
@@ -105,8 +105,7 @@ const dataSync = async (content) => {
     channelId,
     traceUniqueId,
     transactionId,
-    updateDesc,
-    status
+    updateDesc
   );
 
   let student;
@@ -138,8 +137,7 @@ const dataSync = async (content) => {
         channelId,
         traceUniqueId,
         transactionId,
-        updateDesc,
-        status
+        updateDesc
       };
 
       console.log(newValues);
@@ -159,8 +157,7 @@ const dataSync = async (content) => {
         channelId,
         traceUniqueId,
         transactionId,
-        updateDesc,
-        status
+        updateDesc
       };
 
       let studentUpdateSub = await updateStudentSubscription(student.id, productId, updateValues);
