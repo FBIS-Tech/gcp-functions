@@ -71,19 +71,22 @@ const dataSync = async (content) => {
 
   // Extract extension info values
   // let subscriptionKeyword = extensionInfo.find((e) => e.key === "keyword")?.value;
+  let billingCycleStartTime = extensionInfo.find((e) => e.key === "Starttime")?.value;
+  let orderKey = extensionInfo.find((e) => e.key === "orderKey")?.value;
+  let durationOfGracePeriod = extensionInfo.find((e) => e.key === "durationOfGracePeriod")?.value;
+  let billingCycleEndTime = extensionInfo.find((e) => e.key === "cycleEndTime")?.value;
+  let channelId = extensionInfo.find((e) => e.key === "channelID")?.value;
   let traceUniqueId = extensionInfo.find((e) => e.key === "TraceUniqueID")?.value;
   let transactionId = extensionInfo.find((e) => e.key === "transactionID")?.value;
-  let orderKey = extensionInfo.find((e) => e.key === "orderKey")?.value;
-  let rentSuccess = extensionInfo.find((e) => e.key === "rentSuccess")?.value;
-  let cycleEndTime = extensionInfo.find((e) => e.key === "cycleEndTime")?.value;
-  let startTime = extensionInfo.find((e) => e.key === "Starttime")?.value;
-  let accessCode = extensionInfo.find((e) => e.key === "accessCode")?.value;
+  // let rentSuccess = extensionInfo.find((e) => e.key === "rentSuccess")?.value;
+  // let status = extensionInfo.find((e) => e.key === "status")?.value;
+  // let accessCode = extensionInfo.find((e) => e.key === "accessCode")?.value;
 
   // Extract and convert time values
   const effectiveTime = convertTimeStringToDate(syncOrder?.effectiveTime);
   const expiryTime = convertTimeStringToDate(syncOrder?.expiryTime);
-  startTime = convertTimeStringToDate(startTime);
-  cycleEndTime = convertTimeStringToDate(cycleEndTime);
+  billingCycleStartTime = convertTimeStringToDate(billingCycleStartTime);
+  billingCycleEndTime = convertTimeStringToDate(billingCycleEndTime);
 
   // Extract reason for update
   const updateDesc = syncOrder.updateDesc;
@@ -91,19 +94,18 @@ const dataSync = async (content) => {
   // Extract product ID
   const productId = syncOrder.productID;
 
+  // Log eventual subscription payload
   console.log(
-    traceUniqueId,
-    transactionId,
-    orderKey,
-    rentSuccess,
-    cycleEndTime,
-    startTime,
     effectiveTime,
     expiryTime,
-    startTime,
-    cycleEndTime,
-    updateDesc,
-    productId,
+    billingCycleStartTime,
+    orderKey,
+    durationOfGracePeriod,
+    billingCycleEndTime,
+    channelId,
+    traceUniqueId,
+    transactionId,
+    updateDesc
   );
 
   let student;
@@ -128,12 +130,14 @@ const dataSync = async (content) => {
       let newValues = {
         effectiveTime,
         expiryTime,
-        cycleEndTime,
-        startTime,
-        updateDesc,
+        billingCycleStartTime,
+        orderKey,
+        durationOfGracePeriod,
+        billingCycleEndTime,
+        channelId,
         traceUniqueId,
         transactionId,
-        orderKey
+        updateDesc
       };
 
       console.log(newValues);
@@ -146,12 +150,14 @@ const dataSync = async (content) => {
       let updateValues = {
         effectiveTime,
         expiryTime,
-        cycleEndTime,
-        startTime,
-        updateDesc,
+        billingCycleStartTime,
+        orderKey,
+        durationOfGracePeriod,
+        billingCycleEndTime,
+        channelId,
         traceUniqueId,
         transactionId,
-        orderKey
+        updateDesc
       };
 
       let studentUpdateSub = await updateStudentSubscription(student.id, productId, updateValues);
