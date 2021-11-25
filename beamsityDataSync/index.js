@@ -90,6 +90,7 @@ const dataSync = async (content) => {
   const updateDesc = syncOrder.updateDesc;
 
   console.log(
+    subscriptionKeyword,
     syncOrder.productID,
     traceUniqueId,
     transactionId,
