@@ -42,10 +42,10 @@ const addStudent = async (msisdn) => {
     }
 }
 
-const addStudentToSubscription = async (subscriptionKeyword, values) => {
+const addStudentToSubscription = async (productId, values) => {
     try {
         const { data } = await axios.post(
-            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/subscriptions/${subscriptionKeyword}/subscribe`,
+            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/subscriptions/${productId}/subscribe`,
             values,
             {
                 headers: {
@@ -62,10 +62,10 @@ const addStudentToSubscription = async (subscriptionKeyword, values) => {
     }
 }
 
-const updateStudentSubscription = async (subscriptionKeyword, studentId, values) => {
+const updateStudentSubscription = async (studentId, productId, values) => {
     try {
         const { data } = await axios.put(
-            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/subscriptions/${subscriptionKeyword}/${studentId}`,
+            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/${studentId}/subscriptions/${productId}`,
             { values },
             {
                 headers: {
@@ -102,10 +102,10 @@ const updateStudentSubscription = async (subscriptionKeyword, studentId, values)
 //     });
 // }
 
-const deleteStudentSubscription = async (subscriptionKeyword, studentId) => {
+const deleteStudentSubscription = async (studentId, productId) => {
     try {
         const { data } = await axios.delete(
-            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/subscriptions/${subscriptionKeyword}/${studentId}`,
+            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/${studentId}/subscriptions/${productId}`,
             {
                 headers: {
                     'X-Client-Key': process.env.X_CLIENT_KEY

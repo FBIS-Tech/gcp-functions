@@ -70,7 +70,7 @@ const dataSync = async (content) => {
   console.log(syncOrder, extensionInfo, msisdn);
 
   // Extract extension info values
-  let subscriptionKeyword = extensionInfo.find((e) => e.key === "keyword")?.value;
+  // let subscriptionKeyword = extensionInfo.find((e) => e.key === "keyword")?.value;
   let traceUniqueId = extensionInfo.find((e) => e.key === "TraceUniqueID")?.value;
   let transactionId = extensionInfo.find((e) => e.key === "transactionID")?.value;
   let orderKey = extensionInfo.find((e) => e.key === "orderKey")?.value;
@@ -79,6 +79,7 @@ const dataSync = async (content) => {
   let startTime = extensionInfo.find((e) => e.key === "Starttime")?.value;
   let updateReason = extensionInfo.find((e) => e.key === "Starttime")?.value;
   let accessCode = extensionInfo.find((e) => e.key === "accessCode")?.value;
+  let productId = syncOrder.productID;
 
   // Extract and convert time values
   const effectiveTime = convertTimeStringToDate(syncOrder?.effectiveTime);
@@ -90,7 +91,6 @@ const dataSync = async (content) => {
   const updateDesc = syncOrder.updateDesc;
 
   console.log(
-    subscriptionKeyword,
     syncOrder.productID,
     traceUniqueId,
     transactionId,
@@ -133,11 +133,12 @@ const dataSync = async (content) => {
       };
 
       console.log(newValues);
-      let studentSub = await addStudentToSubscription(subscriptionKeyword, newValues);
-      console.log("Student sub added successfully: ", studentSub);
+      let studentSub = await addStudentToSubscription(productId, newValues);
+      console.log(studentSub);
+      console.log(`Student sub with subscription product ID ${productId} added successfully`);
       break;
     case DATASYNC_TYPE_UPDATE:
-      //update existing subscriptin
+      //update existing subscription
       let updateValues = {
         effectiveTime,
         expiryTime,
@@ -151,22 +152,18 @@ const dataSync = async (content) => {
       };
 
       let studentUpdateSub = await updateStudentSubscription(
-        subscriptionKeyword,
         student.id,
+        productId,
         updateValues
       );
       console.log(studentUpdateSub);
-      console.log(
-        `Student sub with subscription keyword ${subscriptionKeyword} updated successfully: `
-      );
+      console.log(`Student sub with subscription product ID ${productId} updated successfully`);
       break;
     case DATASYNC_TYPE_DELETE:
       //Delete existing subscription
-      let studentDeleteSub = await deleteStudentSubscription(subscriptionKeyword, student?.id);
+      let studentDeleteSub = await deleteStudentSubscription(student.id, productId);
       console.log(studentDeleteSub);
-      console.log(
-        `Student sub with subscription keyword ${subscriptionKeyword} deleted successfully: `
-      );
+      console.log(`Student sub with subscription product ID ${productId} deleted successfully`);
       break;
     // case DATASYNC_TYPE_BLOCK:
     //     //Block existing subscription
