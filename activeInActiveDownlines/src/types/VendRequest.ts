@@ -1,4 +1,5 @@
-interface BasicVendRequest {
+export interface VendRequest {
+    name: string,
     requestMSISDN: string,
     retailCode: string,
     dealerCode: string
@@ -6,11 +7,4 @@ interface BasicVendRequest {
     // date: string
 }
 
-export interface SumVendRequest extends BasicVendRequest {
-    name: string,
-}
-
-export interface VendRequest extends BasicVendRequest {
-    retailerName: string,
-    subDealerName: string,
-}
+export interface SumVendRequest extends VendRequest {}

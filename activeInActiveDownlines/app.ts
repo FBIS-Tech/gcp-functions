@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import * as excel from 'exceljs'
-import { retailersStatus } from './src/query'
+import { processDownlines } from './src/query'
 import { exportToExcel } from './src/objectToExcel'
 
 import * as moment from 'moment'
@@ -10,11 +10,10 @@ import { SumVendRequest } from "./src/types/VendRequest";
 
 console.log("Hello world!")
 
-
 const startDate = moment().subtract(6, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss')
 const endDate = moment().endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
-retailersStatus(startDate, endDate)
+processDownlines(startDate, endDate)
     .then(result => {
         console.log(result)
 
