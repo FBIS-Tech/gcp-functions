@@ -42,10 +42,10 @@ const addStudent = async (msisdn) => {
     }
 }
 
-const addStudentToSubscription = async (productId, values) => {
+const addStudentToSubscription = async (studentId, productId, values) => {
     try {
         const { data } = await axios.post(
-            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/subscriptions/${productId}/subscribe`,
+            `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/${studentId}/subscriptions/${productId}`,
             values,
             {
                 headers: {

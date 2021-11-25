@@ -77,9 +77,7 @@ const dataSync = async (content) => {
   let rentSuccess = extensionInfo.find((e) => e.key === "rentSuccess")?.value;
   let cycleEndTime = extensionInfo.find((e) => e.key === "cycleEndTime")?.value;
   let startTime = extensionInfo.find((e) => e.key === "Starttime")?.value;
-  let updateReason = extensionInfo.find((e) => e.key === "Starttime")?.value;
   let accessCode = extensionInfo.find((e) => e.key === "accessCode")?.value;
-  let productId = syncOrder.productID;
 
   // Extract and convert time values
   const effectiveTime = convertTimeStringToDate(syncOrder?.effectiveTime);
@@ -90,14 +88,22 @@ const dataSync = async (content) => {
   // Extract reason for update
   const updateDesc = syncOrder.updateDesc;
 
+  // Extract product ID
+  const productId = syncOrder.productID;
+
   console.log(
-    syncOrder.productID,
     traceUniqueId,
     transactionId,
     orderKey,
     rentSuccess,
     cycleEndTime,
-    startTime
+    startTime,
+    effectiveTime,
+    expiryTime,
+    startTime,
+    cycleEndTime,
+    updateDesc,
+    productId,
   );
 
   let student;
@@ -120,20 +126,18 @@ const dataSync = async (content) => {
     case DATASYNC_TYPE_ADD:
       //create a new subscription
       let newValues = {
-        studentId: student.id,
         effectiveTime,
         expiryTime,
         cycleEndTime,
         startTime,
-        updateDesc: syncOrder.updateDesc,
+        updateDesc,
         traceUniqueId,
         transactionId,
-        orderKey,
-        updateReason,
+        orderKey
       };
 
       console.log(newValues);
-      let studentSub = await addStudentToSubscription(productId, newValues);
+      let studentSub = await addStudentToSubscription(student.id, productId, newValues);
       console.log(studentSub);
       console.log(`Student sub with subscription product ID ${productId} added successfully`);
       break;
@@ -147,15 +151,10 @@ const dataSync = async (content) => {
         updateDesc,
         traceUniqueId,
         transactionId,
-        orderKey,
-        updateReason,
+        orderKey
       };
 
-      let studentUpdateSub = await updateStudentSubscription(
-        student.id,
-        productId,
-        updateValues
-      );
+      let studentUpdateSub = await updateStudentSubscription(student.id, productId, updateValues);
       console.log(studentUpdateSub);
       console.log(`Student sub with subscription product ID ${productId} updated successfully`);
       break;
