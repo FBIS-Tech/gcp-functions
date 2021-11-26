@@ -120,6 +120,7 @@ const text = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/e
 
 const DATE_FORMAT_REGEX = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
 
+// TO DO: Use timezone library (e.g. moment.js)
 const convertTimeStringToDate = (dateString) => {
   const dateArray = DATE_FORMAT_REGEX.exec(dateString);
 
@@ -131,26 +132,20 @@ const convertTimeStringToDate = (dateString) => {
   console.log(year, month, day, hour, minute, second);
 
   // Add 1 to hour to offset conversion to GMT by ISOString
-  const convertedDate = new Date(
-    `${year}-${month}-${day}T${hour}:${minute}:${second}`
-  );
+  const convertedDate = new Date(`${year}-${month}-${day} ${Number(hour)+1}:${minute}:${second}`);
+  
+  if (convertedDate.toString() === "Invalid Date")
+    throw new Error(`Invalid date string: ${dateString}`);
 
-  try {
-    convertedDate.toString();
-  } catch (e) {
-    console.log(e);
-    throw new Error(`Invalid date: ${convertedDate}`);
-  }
-
-  var tzoffset = new Date().getTimezoneOffset() * 60000;
-  return new Date(convertedDate - tzoffset).toISOString();
+return convertedDate.toISOString().slice(0, 19).replace('T', ' ');
 };
 
 const main = async () => {
   //   await dataSync(text);
   try {
-    console.log(convertTimeStringToDate("20210915085557"));
+    console.log(convertTimeStringToDate("20211126093755"));
   } catch (e) {
+      console.log("error!");
     console.log(e);
   }
 };
