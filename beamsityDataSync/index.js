@@ -22,23 +22,24 @@ const {
 // Matches string : 20210911141647
 const DATE_FORMAT_REGEX = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
 
+// TO DO: Use timezone library (e.g. moment.js)
 const convertTimeStringToDate = (dateString) => {
   const dateArray = DATE_FORMAT_REGEX.exec(dateString);
 
   // If string isn't properly formed
-  if(!dateArray) throw new Error(`Invalid date string: ${dateString}`);
+  if (!dateArray) throw new Error(`Invalid date string: ${dateString}`);
 
   // Destructure component of string match
   const [_, year, month, day, hour, minute, second] = dateArray;
 
   // Add 1 to hour to offset conversion to GMT by ISOString
-  const convertedDate = new Date(`${year}-${month}-${day}T${Number(hour) + 1}:${minute}:${second}`);
-
-  if(convertedDate.toString() === "Invalid Date")
-    throw new Error(`Invalid date string: ${dateString}`);
+  const convertedDate = new Date(`${year}-${month}-${day} ${Number(hour)+1}:${minute}:${second}`);
   
-  return convertedDate.toISOString();
-}
+  if (convertedDate.toString() === "Invalid Date")
+    throw new Error(`Invalid date string: ${dateString}`);
+    
+  return convertedDate.toISOString().slice(0, 19).replace('T', ' ');
+};
 
 /**
  * Triggered from a message on a Cloud Pub/Sub topic.
@@ -83,9 +84,13 @@ const dataSync = async (content) => {
   // let accessCode = extensionInfo.find((e) => e.key === "accessCode")?.value;
 
   // Extract and convert time values
+  console.log("Converting effective time to datetime string");
   const effectiveTime = convertTimeStringToDate(syncOrder?.effectiveTime);
+  console.log("Converting expiry time to datetime string");
   const expiryTime = convertTimeStringToDate(syncOrder?.expiryTime);
+  console.log("Converting billing cycle start time to datetime string");
   billingCycleStartTime = convertTimeStringToDate(billingCycleStartTime);
+  console.log("Converting billing cycle end time to datetime string");
   billingCycleEndTime = convertTimeStringToDate(billingCycleEndTime);
 
   // Extract reason for update
@@ -93,6 +98,10 @@ const dataSync = async (content) => {
 
   // Extract product ID
   const productId = syncOrder.productID;
+
+  // TO DO: Fix beamsity app end to allow input
+  channelId = null;
+  traceUniqueId = null;
 
   // Log eventual subscription payload
   console.log(
@@ -160,6 +169,7 @@ const dataSync = async (content) => {
         updateDesc
       };
 
+      console.log(updateValues);
       let studentUpdateSub = await updateStudentSubscription(student.id, productId, updateValues);
       console.log(studentUpdateSub);
       console.log(`Student sub with subscription product ID ${productId} updated successfully`);

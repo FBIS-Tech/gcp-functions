@@ -9,7 +9,8 @@ const getStudent = async (msisdn) => {
             `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/${msisdn}`,
             {
                 headers: {
-                    'X-Client-Key': process.env.X_CLIENT_KEY
+                    'X-Client-Key': process.env.X_CLIENT_KEY,
+                    'Content-Type': 'application/json'
                 }
             }
         );
@@ -29,7 +30,8 @@ const addStudent = async (msisdn) => {
             { msisdn },
             {
                 headers: {
-                    'X-Client-Key': process.env.X_CLIENT_KEY
+                    'X-Client-Key': process.env.X_CLIENT_KEY,
+                    'Content-Type': 'application/json'
                 }
             }
         );
@@ -49,7 +51,8 @@ const addStudentToSubscription = async (studentId, productId, values) => {
             values,
             {
                 headers: {
-                    'X-Client-Key': process.env.X_CLIENT_KEY
+                    'X-Client-Key': process.env.X_CLIENT_KEY,
+                    'Content-Type': 'application/json'
                 }
             }
         );
@@ -66,10 +69,11 @@ const updateStudentSubscription = async (studentId, productId, values) => {
     try {
         const { data } = await axios.put(
             `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/${studentId}/subscriptions/${productId}`,
-            { values },
+            values,
             {
                 headers: {
-                    'X-Client-Key': process.env.X_CLIENT_KEY
+                    'X-Client-Key': process.env.X_CLIENT_KEY,
+                    'Content-Type': 'application/json'
                 }
             }
         );
@@ -108,7 +112,8 @@ const deleteStudentSubscription = async (studentId, productId) => {
             `${process.env.MAIN_APP_BASE_URL}/api/v1/datasync/students/${studentId}/subscriptions/${productId}`,
             {
                 headers: {
-                    'X-Client-Key': process.env.X_CLIENT_KEY
+                    'X-Client-Key': process.env.X_CLIENT_KEY,
+                    'Content-Type': 'application/json'
                 }
             }
         );
