@@ -6,7 +6,6 @@ import { exportToExcel } from "./objectToExcel";
 import { SalesRequest } from "./types/SalesRequest";
 
 export async function salesTransactionReport(req: Request, res: Response) {
-  console.log(req);
 
   const start = req.query.start as string
   const end = req.query.end as string

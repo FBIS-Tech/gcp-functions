@@ -5,7 +5,6 @@ const moment = require("moment");
 const query_1 = require("./query");
 const objectToExcel_1 = require("./objectToExcel");
 async function salesTransactionReport(req, res) {
-    console.log(req);
     const start = req.query.start;
     const end = req.query.end;
     const startDate = (start ? moment(start) : moment().subtract(6, 'days')).startOf('day');
@@ -26,7 +25,7 @@ async function salesTransactionReport(req, res) {
         });
         const workbook = (await objectToExcel_1.exportToExcel(dataSorted));
         res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        res.setHeader("Content-Disposition", `attachment; filename="sales-report-${startDate.format('YYYY-MM-DD')}-to-${endDate.format('YYYY-MM-DD')}.xlsx`);
+        res.setHeader("Content-Disposition", `attachment; filename=sales-report-${startDate.format('YYYY-MM-DD')}-to-${endDate.format('YYYY-MM-DD')}.xlsx`);
         return workbook.xlsx.write(res).then(() => {
             res.status(200).end();
         });

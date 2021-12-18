@@ -1,57 +1,87 @@
 import * as  moment from "moment";
 import { RowDataPacket } from "mysql2";
-import { db } from "./db";
+import * as mysql from "mysql2/promise";
 import { SalesRequest } from "./types/SalesRequest";
 
 export async function salesTransactions(start: string, end: string) {
-  console.log(start, end);
-  return new Promise((resolve, reject) => {
-    const query = `
-                  SELECT 
-                  mvr.request_msisdn, 
-                  mvr.destination_msisdn, 
-                  mvr.retail_code, 
-                  mvr.dealer_code, 
-                  mvr.amount, 
-                  mvr.created_at, 
-                  mvr.product_code, 
-                  mvr.channel,
-                  d.name as dealer_name,
-                  pt.territory as dealer_territory
-                  FROM mtn_vend_requests as mvr 
-                  LEFT JOIN dealers as d ON mvr.dealer_code = d.retail_code
-                  LEFT JOIN partner_territories as pt ON d.territory = pt.id
-                  WHERE (mvr.created_at BETWEEN '${start}' AND '${end}') AND mvr.status = 'SUCCESSFUL'
-                  ORDER BY mvr.id ASC`
+    console.log(start, end);
+    const startT = moment();
 
-    const startT = moment()
-    db.query(query, (err, result) => {
-      if (err) {
-        console.log("Error: ", err);
-        reject(err);
-      }
+    const db = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      user: process.env.DB_USER,
+      password: process.env.DB_PWD,
+      database: process.env.DB_NAME
+    });
 
-      const rows = <RowDataPacket[]>result;
+    try {
+      const query = `
+          SELECT 
+          mvr.request_msisdn, 
+          mvr.destination_msisdn, 
+          mvr.retail_code, 
+          mvr.dealer_code, 
+          mvr.amount, 
+          mvr.created_at, 
+          mvr.product_code, 
+          mvr.channel,
+          d.name as dealer_name,
+          pt.territory as dealer_territory
+          FROM mtn_vend_requests as mvr 
+          LEFT JOIN dealers as d ON mvr.dealer_code = d.retail_code
+          LEFT JOIN partner_territories as pt ON d.territory = pt.id
+          WHERE (mvr.created_at BETWEEN '${start}' AND '${end}') AND mvr.status = 'SUCCESSFUL'
+          ORDER BY mvr.id ASC`;
 
-      const logs = rows.map((row) => {
-        const salesRequest: SalesRequest = {
-          requestMSISDN: row.request_msisdn,
-          destinationMSISDN: row.destination_msisdn,
-          retailCode: row.retail_code,
-          dealerCode: row.dealer_code,
-          dealerName: row.dealer_name,
-          territory: row.dealer_territory,
-          amount: row.amount,
-          productCode: row.product_code,
-          channel: row.channel,
-          dateCreated: row.created_at,
-        };
-        return salesRequest;
+      const query2 = `
+          SELECT 
+          irl.request_msisdn, 
+          irl.destination_msisdn, 
+          irl.retail_code, 
+          irl.dealer_code, 
+          irl.amount, 
+          irl.created_at,
+          d.name as dealer_name,
+          pt.territory as dealer_territory
+          FROM instant_recharge_logs as irl 
+          LEFT JOIN dealers as d ON irl.dealer_code = d.retail_code
+          LEFT JOIN partner_territories as pt ON d.territory = pt.id
+          WHERE (irl.created_at BETWEEN '${start}' AND '${end}')
+          ORDER BY irl.id ASC`;
+
+      const [mvrResult] = await db.execute(query);
+      const [irlResult] = await db.execute(query2);
+
+      const dataRows = <RowDataPacket[]>mvrResult;
+      const irlRows = <RowDataPacket[]>irlResult;
+
+      dataRows.push(...irlRows);
+
+      const logs = dataRows.map((row) => {
+          const salesRequest: SalesRequest = {
+              requestMSISDN: row.request_msisdn,
+              destinationMSISDN: row.destination_msisdn,
+              retailCode: row.retail_code,
+              dealerCode: row.dealer_code,
+              dealerName: row.dealer_name,
+              territory: row.dealer_territory,
+              amount: row.amount,
+              productCode: row.product_code || "VTU",
+              channel: row.channel || "Retopin",
+              dateCreated: row.created_at,
+          };
+
+          return salesRequest;
       });
 
-      const duration = moment.duration(moment().diff(startT))
-      console.log(`${duration.hours()}:${duration.minutes()}:${duration.seconds()}`)
-      resolve(logs);
-    });
-  });
+        const duration = moment.duration(moment().diff(startT))
+        console.log(`${duration.hours()}:${duration.minutes()}:${duration.seconds()}`)
+
+        return logs;
+      
+    } catch (error) {
+        console.log("Error: ", error);
+        throw error;
+    }
 }
