@@ -1,11 +1,30 @@
-import moment = require('moment');
 import { RowDataPacket } from 'mysql2';
 import { db } from './db'
 import { Student } from './types/Student'
 
-export async function studentsList(): Promise<Student[]> {
+export async function studentsList(schoolId?: string): Promise<Student[]> {
     return new Promise((resolve, reject) => {
-        const query = `
+        const selectSubscriptionsQuery = `
+        SELECT
+        id
+        FROM
+        subscriptions
+        WHERE
+        school_id LIKE (IF('${schoolId}' IS NULL, '%', '${schoolId}'))
+        `;
+        const subscriptionIds = db.query(selectSubscriptionsQuery, (err, result) => {
+            if (err) {
+                console.log("Error: ", err)
+                reject(err)
+            }
+
+            const rows = <RowDataPacket[]>result;
+            return rows.map((row) => {
+                return row.id;
+            });
+        })
+
+        const selectStudentsQuery = `
         SELECT
         st.id,
         st.msisdn,
@@ -23,9 +42,11 @@ export async function studentsList(): Promise<Student[]> {
         ON st.id = ss.student_id
         INNER JOIN states as sa
         ON st.state_id = sa.id
+        WHERE ss.subscription_id IN (?)
         GROUP BY st.id
         `;
-        db.query(query, (err, result) => {
+        
+        db.query(selectStudentsQuery, [subscriptionIds], (err, result) => {
             if (err) {
                 console.log("Error: ", err)
                 reject(err)
@@ -33,7 +54,7 @@ export async function studentsList(): Promise<Student[]> {
 
             const rows = <RowDataPacket[]>result;
 
-            const requests = rows.map((row) => {
+            const students = rows.map((row) => {
                 const student = {
                     firstName: row.first_name,
                     lastName: row.last_name,
@@ -49,7 +70,6 @@ export async function studentsList(): Promise<Student[]> {
                 return student;
             });
 
-            const students = requests
             console.log("Students List: ", students)
             resolve(students);
         })

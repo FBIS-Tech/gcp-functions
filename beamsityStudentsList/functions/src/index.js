@@ -4,9 +4,11 @@ exports.studentsRecord = void 0;
 const query_1 = require("./query");
 const objectToExcel_1 = require("./objectToExcel");
 async function studentsRecord(req, res) {
+    var _a;
     console.log(req);
+    const schoolId = (_a = req.query.schoolId) !== null && _a !== void 0 ? _a : null;
     try {
-        const studentsListPromise = query_1.studentsList();
+        const studentsListPromise = query_1.studentsList(schoolId);
         const [students] = await studentsListPromise;
         const data = [students];
         console.log("Data: ", data);

@@ -2,9 +2,27 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.studentsList = void 0;
 const db_1 = require("./db");
-async function studentsList() {
+async function studentsList(schoolId) {
     return new Promise((resolve, reject) => {
-        const query = `
+        const selectSubscriptionsQuery = `
+        SELECT
+        id
+        FROM
+        subscriptions
+        WHERE
+        school_id LIKE (IF('${schoolId}' IS NULL, '%', '${schoolId}'))
+        `;
+        const subscriptionIds = db_1.db.query(selectSubscriptionsQuery, (err, result) => {
+            if (err) {
+                console.log("Error: ", err);
+                reject(err);
+            }
+            const rows = result;
+            return rows.map((row) => {
+                return row.id;
+            });
+        });
+        const selectStudentsQuery = `
         SELECT
         st.id,
         st.msisdn,
@@ -22,15 +40,16 @@ async function studentsList() {
         ON st.id = ss.student_id
         INNER JOIN states as sa
         ON st.state_id = sa.id
+        WHERE ss.subscription_id IN (?)
         GROUP BY st.id
         `;
-        db_1.db.query(query, (err, result) => {
+        db_1.db.query(selectStudentsQuery, [subscriptionIds], (err, result) => {
             if (err) {
                 console.log("Error: ", err);
                 reject(err);
             }
             const rows = result;
-            const requests = rows.map((row) => {
+            const students = rows.map((row) => {
                 const student = {
                     firstName: row.first_name,
                     lastName: row.last_name,
@@ -45,7 +64,6 @@ async function studentsList() {
                 };
                 return student;
             });
-            const students = requests;
             console.log("Students List: ", students);
             resolve(students);
         });

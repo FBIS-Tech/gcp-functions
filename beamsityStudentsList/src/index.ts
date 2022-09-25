@@ -5,10 +5,12 @@ import { exportToExcel } from './objectToExcel'
 import { Student } from './types/Student'
 
 export async function studentsRecord(req: Request, res: Response) {
-    console.log(req)
+    console.log(req);
+
+    const schoolId = req.query.schoolId as string ?? null
 
     try {
-        const studentsListPromise: Promise<Student[]> = studentsList();
+        const studentsListPromise: Promise<Student[]> = studentsList(schoolId);
 
         const [students] = await studentsListPromise
         const data = [students]
