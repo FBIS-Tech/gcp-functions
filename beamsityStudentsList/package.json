@@ -16,7 +16,7 @@
         "cp-package": "copyfiles package.json functions/src",
         "build": "run-s clean lint tsc cp-package",
         "test": "mocha \"functions/test/\"",
-        "deploy": "gcloud functions deploy $npm_package_config_function_name --runtime $npm_package_config_runtime --region=$npm_package_config_region --trigger-http --project $npm_package_config_gcp_project"
+        "deploy": "gcloud functions deploy $npm_package_config_function_name --allow-unauthenticated --runtime $npm_package_config_runtime --region=$npm_package_config_region --trigger-http --project $npm_package_config_gcp_project"
     },
     "bin": {
         "create-project": "./cli.js"
