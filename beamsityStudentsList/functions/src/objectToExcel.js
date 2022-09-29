@@ -19,12 +19,11 @@ async function exportToExcel(data) {
                 { header: "Email", key: "email", width: 15 },
                 { header: "Gender", key: "gender", width: 5 },
                 { header: "State", key: "state", width: 10 },
-                { header: "Subs", key: "totalSubs", width: 5 },
+                { header: "Total Subs", key: "totalSubs", width: 5 },
                 { header: "Active Subs", key: "totalActiveSubs", width: 5 },
                 { header: "Date Joined", key: "dateJoined", width: 10 },
             ];
             data.forEach((element, idx) => {
-                console.log("Adding Row: ", element);
                 worksheet.insertRow(idx + 2, {
                     firstName: element.firstName,
                     lastName: element.lastName,
