@@ -4,7 +4,6 @@ export interface Student {
     msisdn: number,
     email: string
     gender: string,
-    lastActive: string,
     state: string,
     totalSubs: number,
     totalActiveSubs: number,
