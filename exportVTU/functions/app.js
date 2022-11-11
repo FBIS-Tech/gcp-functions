@@ -6,7 +6,7 @@ const query_1 = require("./src/query");
 const objectToExcel_1 = require("./src/objectToExcel");
 const moment = require("moment");
 console.log("Hello world!");
-const batchId = Date.now().toString();
+const batchId = "1";
 query_1.fetchBatchVouchers(batchId)
     .then((result) => {
     const data = result;

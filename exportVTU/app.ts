@@ -8,9 +8,7 @@ import { exportToExcel } from "./src/objectToExcel";
 import * as moment from "moment";
 import { VTU } from "./src/types/VTU";
 
-console.log("Hello world!");
-
-const batchId = Date.now().toString();
+const batchId = "1";
 fetchBatchVouchers(batchId)
   .then((result) => {
 
