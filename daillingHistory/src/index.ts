@@ -5,16 +5,13 @@ import { exportToExcel } from './objectToExcel'
 import { Student } from './types/Student'
 
 export async function studentsRecord(req: Request, res: Response) {
-    // const studentIds = req.query.studentIds?.split(",").map((id: string) => id.trim()) ?? null;
     const studentIds = typeof req.query.studentIds === 'string' ? req.query.studentIds?.split(",").map((id: string) => id.trim()) : [];
     console.log(studentIds, "studentIds");
-
     try {
         const studentsListPromise: Promise<Student[]> = studentsList(studentIds);
 
         const students = await studentsListPromise
         const workbook = await exportToExcel(students) as excel.Workbook
-
         // // res is a Stream object
         res.setHeader(
             "Content-Type",

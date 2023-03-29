@@ -1,10 +1,8 @@
 import { RowDataPacket } from 'mysql2';
 import { db } from './db'
 import { Student } from './types/Student'
-
 export async function studentsList(studentIds?: string[]): Promise<Student[]> {
     return new Promise((resolve, reject) => {
-        // let studentIds = [1, 2];
         const selectStudentsQuery = `
             SELECT
             st.id,
@@ -31,7 +29,6 @@ export async function studentsList(studentIds?: string[]): Promise<Student[]> {
                 console.log("Error: ", err2)
                 reject(err2)
             }
-
             const rows2 = <RowDataPacket[]>result2;
 
             const students = rows2?.map((row) => {
@@ -48,7 +45,6 @@ export async function studentsList(studentIds?: string[]): Promise<Student[]> {
                 };
                 return student;
             });
-
             resolve(students);
         })
         // })
