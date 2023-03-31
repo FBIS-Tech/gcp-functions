@@ -4,7 +4,7 @@ import { studentsList } from './query'
 import { exportToExcel } from './objectToExcel'
 import { Student } from './types/Student'
 
-export async function studentsRecord(req: Request, res: Response) {
+export async function studentsDiallingHistory(req: Request, res: Response) {
     const studentIds = typeof req.query.studentIds === 'string' ? req.query.studentIds?.split(",").map((id: string) => id.trim()) : [];
     console.log(studentIds, "studentIds");
     try {
